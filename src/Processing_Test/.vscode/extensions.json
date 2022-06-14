@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "millenniumambiguity.processing-formatter",
+    "tobiah.language-pde",
+    "johnpapa.vscode-peacock",
+    "aaron-bond.better-comments",
+    "streetsidesoftware.code-spell-checker",
+    "vivaxy.vscode-conventional-commits",
+    "eamodio.gitlens",
+    "zainchen.json",
+    "Gruntfuggly.todo-tree"
+  ]
+}

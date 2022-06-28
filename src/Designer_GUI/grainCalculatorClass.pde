@@ -14,6 +14,10 @@ public class GrainCalculator {
   color[] displayColor;
   String name; // <----- update and use for debug
 
+  ArrayList<Float> grainsPositions = new ArrayList<Float>();
+  int[] grainsGlobalIds;
+  int[] grainsMaterials;
+
   int xPosition;
   int yPosition;
 
@@ -23,15 +27,15 @@ public class GrainCalculator {
 
   GrainCalculator(PApplet parent, String newName, PhysicalSlider s, MaterialCollection m, float targetRange) {
     this.parent = parent;
-    granularity = m.granularity;
-    binNumber = s.state.length;
-    segmentSize = s.buttonHeight;
-    granularityPointer = s.state;
-    scalarForOutput = targetRange / s.sliderHeight;
-    displayColor = m.displayColor;
-    xPosition = s.xPosition + s.sliderWidth + 20;
-    yPosition = s.yPosition;
-    name = newName;
+    this.granularity = m.materialGranularity;
+    this.binNumber = s.state.length;
+    this.segmentSize = s.buttonHeight;
+    this.granularityPointer = s.state;
+    this.scalarForOutput = targetRange / s.sliderHeight;
+    this.displayColor = m.displayColor;
+    this.xPosition = s.xPosition + s.sliderWidth + 20;
+    this.yPosition = s.yPosition;
+    this.name = newName;
 
     //  availableGranularity[yellowSlider.state[i]]) //actual granularity value
     //  yellowSlider.state.length //list of all pointers to granularity
@@ -39,17 +43,26 @@ public class GrainCalculator {
     //
     //  scalarForOutput = 1000 / yellowSlider.sliderHeight;
     //  yellowSlider.state[i]
+    
+    //for (int i = 0; i < this.granularity.length; i++) {
+    //  println(int(granularity[i]));
+    //  this.granularity[i] = this.granularity[i] * 3;
+    //  println(int(this.granularity[i]));
+    //}
+    
   }
 
   void updateGrains() {
 
-    //this function searches for new sections
+    // this function searches for new sections
     lineIndexStart = 0;
     lineIndexEnd = 0;
     regionCounter = 0;
     globalGrainID = 0;
-    println(yPosition);
+
     println("[INFO] Begin ARRAY " + this.name);
+
+    grainsPositions.clear();
 
     for (int i = 0; i < binNumber; i++) { //loop through the array
 
@@ -57,7 +70,6 @@ public class GrainCalculator {
       if (i == granularityPointer.length - 1) { //if its one before the last line 
         //  println("*************Last chance******************");
         lineIndexEnd = i + 1; //then the end of the section is the end of the index
-
 
         if (granularityPointer[i] >= 0) { //if its not -1 (-1 is the default value)
           //the nextline is where all the assignements happen
@@ -101,10 +113,15 @@ public class GrainCalculator {
     //  println("Last grainNumber "+ grainSpacing);
     parent.stroke(255);
     parent.line(xPosition, lineIndexStart * segmentSize + yPosition, xPosition, lineIndexEnd * segmentSize + yPosition); //draw that line
+
+
+
     for (int y = 0; y < grainNumber; y++) {
       parent.fill(255);
+
       if (granularityPointer[i] != -1) { //if there is a grain
         float grainPosition = ((lineIndexStart * segmentSize) + (grainSpacing * y) + (grainSpacing * 0.5));
+
         if (grainPosition > lineIndexEnd * segmentSize) {
         } else {
 
@@ -118,14 +135,19 @@ public class GrainCalculator {
           print(", " +  "\t" + " at " + grainPosition * scalarForOutput);
           println("," +  "\t" + " \t" + " with material " + granularityPointer[i]);
 
+          grainsPositions.add(grainPosition * scalarForOutput);
+
+          // Save Grain Data
+
           //todo: find the modulo (?) and add half of it to the beginning, so grains are spaced evenly
           parent.stroke(displayColor[granularityPointer[i]]);
-          drawGrain(xPosition, grainPosition + yPosition, 19, 11); //uneven numbers re prettier
+          // drawGrain(xPosition, grainPosition + yPosition, 19, 11); //uneven numbers re prettier
+          drawGrain(xPosition, grainPosition + yPosition, 13, 7); // uneven numbers re prettier
           grainID = grainID + 1;
         }
       }
     }
-    
+
     return grainID;
   }
 

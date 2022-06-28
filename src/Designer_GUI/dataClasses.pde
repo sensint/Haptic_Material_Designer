@@ -1,4 +1,3 @@
-
 //data classes for storing information required by gui and controllers
 
 public class HapticEventSequence {
@@ -27,43 +26,54 @@ public class HapticEventSequence {
 
 public class Material {
   String name; //candy
-  boolean oneShot; //true if the material consists of discrete events, false for any continuous vibration 
+  boolean oneShot; // True if the material consists of discrete events, false for any continuous vibration 
   int granularity;
-  int[] parameters; //the actual data
-  color displayColor; //color to use in GUI
+  int[] parameters; // The actual data
+  color displayColor; // Color to use in GUI
 
-  //constructor without position
+  // Constructor without position
   Material() {
     parameters = new int[10];
   }
 }
 
-
 public class MaterialCollection {
   boolean[] assigned;
   String[] name;
-  int[][] parameters; //this should just be an int array
+  int[][] parameters; // This should just be an int array
   boolean[] oneShot;
   color[] displayColor;
-  int[] granularity;
+  int[] materialGranularity;
+  int[] materialFrecuencies;
+  int[] materialWaves;
+  float[] materialAmplitudes;
+  float[] materialDurations;
+  float[][] materialADSR;
 
   //constructor without position
   MaterialCollection() {
-    name = new String[12];
-    parameters = new int[12][10];
-    oneShot = new boolean[12];
-    assigned = new boolean[12];
-    displayColor = new color[12];
-    granularity = new int[12];
+    name = new String[11];
+    parameters = new int[11][10];
+    oneShot = new boolean[11];
+    assigned = new boolean[11];
+    displayColor = new color[11];
+    materialGranularity = new int[11];
+    materialFrecuencies = new int[11];
+    materialWaves = new int[11];
+    materialAmplitudes = new float[11];
+    materialDurations = new float[11];
+    materialADSR = new float[11][4];
+
     for (int i = 0; i < assigned.length; i++) {
       assigned[i] = false;
     }
   }
+
   void assign(int index, Material m) {
-    if ((index >= 0) && (index <12)) {
+    if ((index >= 0) && (index < 11)) {
       name[index] = m.name;
       oneShot[index] = m.oneShot;
-      granularity[index] = m.granularity;
+      materialGranularity[index] = m.granularity;
       parameters[index] = m.parameters;
       displayColor[index] = m.displayColor;
       assigned[index] = true;
@@ -71,14 +81,23 @@ public class MaterialCollection {
       println("[ERROR] Material trying to write to an invalid materialCollection slot");
     }
   }
-  void assign(int index, String newName, boolean newOneShot, int newGranularity, int[] newParameters, color newColor) {
-    if ((index >= 0) && (index <12)) {
+
+  void assign(int index, String newName, boolean newOneShot, int newGranularity, int newFrecuency, int newWave, float newAmplitude, float newDuration, float[] newADSR, int[] newParameters, color newColor) {
+    if ((index >= 0) && (index < 11)) {
       name[index] = newName;
       oneShot[index] = newOneShot;
-      granularity[index] = newGranularity;
+
       parameters[index] = newParameters;
       displayColor[index] = newColor;
       assigned[index] = true;
+
+      // Material parameters
+      materialGranularity[index] = newGranularity;
+      materialFrecuencies[index] = newFrecuency;
+      materialWaves[index] = newWave;
+      materialAmplitudes[index] = newAmplitude;
+      materialDurations[index] = newDuration;
+      materialADSR[index] = newADSR;
     } else { 
       println("[ERROR] material trying to write to an invalid materialCollection slot");
     }

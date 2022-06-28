@@ -7,7 +7,7 @@ SecondApplet sa;
 boolean saActive = false;
 
 // Default values
-float defaultFrecuency = 200;
+int defaultFrecuency = 200;
 int minFrecuency = 0;
 int maxFrecuency = 500;
 float defaultAmplitude = 0.5;
@@ -16,35 +16,37 @@ int maxAmplitude = 1;
 float defaultDuration = 200;
 int minDuration = 0;
 int maxDuration = 1000;
-float defaultBin = 30;
-int minBin = 2;
-int maxBin = 100;
+int minBin = 0;
+int maxBin = 10;
 int defaultWaveForm = 0;
-float env_a = 5; // attack (ms)
-float env_d = 20; // decay (ms)
+float env_a = 5.0; // attack (ms)
+float env_d = 20.0; // decay (ms)
 float env_s = 0.9; // sustain (0-1)
-float env_r = 100; // release (ms)
+float env_r = 100.0; // release (ms)
 float defaultA = 5;
 float defaultD = 20;
 float defaultS = 0.9;
 float defaultR = 100;
+float[] defaultADSR = {defaultA, defaultD, defaultS, defaultR};
 int defaultWave = 0;
 
 // UI Elements
-MaterialCollection material; // materials: we only need one, we have limited it to twelve materials
+MaterialCollection materials; // materials: we only need one, we have limited it to twelve materials
 GrainCalculator yellowGrains, redGrains, blueGrains; // grain calculation: for visualizing grains and storing eventSequences
 PhysicalSlider yellowSlider, redSlider, blueSlider; // physical sliders
 uniqueSelectButtons materialSelector, parameterSelector; // material selectors
 Button saveButton, loadButton, clearButton, uploadButton; // button
 
-String[] materialSelectorNames = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "CV"};
-String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
-int[][] sceneSwitcherPositions = new int[10][4];
+String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"};
+String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
+int[][] sceneSwitcherPositions = new int[11][4];
 int[][] materialSelectorPositions = new int[11][4];
+int[] materialGranularity = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+int numVerticalButtons = 10;
 
 // Colors
 color bgColor = color(18, 18, 18);
-color[] guiColors = {
+color[] materialColors = {
   color(248, 255, 229), 
   color(252, 226, 145), 
   color(255, 196, 61), 
@@ -55,10 +57,9 @@ color[] guiColors = {
   color(27, 154, 170), 
   color(17, 184, 165), 
   color(6, 214, 160), 
-  color(5, 182, 129), 
+  color(5, 200, 129), 
   color(18, 18, 18)
 };
-
 
 // FIRST WINDOWS ---------------------------------------------------------
 
@@ -68,17 +69,19 @@ void settings() {
 
 void setup() {
 
+  textSize(15);
+
   data = new JSONObject();
   materialJSON = new JSONArray();
 
-  for (int i = 0; i < 11; i++) {
+  for (int i = 0; i < materialSelectorNames.length; i++) {
     JSONObject currentMaterial = new JSONObject();
 
     currentMaterial.setInt("id", i);
     currentMaterial.setFloat("frecuency", defaultFrecuency);
     currentMaterial.setFloat("amplitude", defaultAmplitude);
     currentMaterial.setFloat("duration", defaultDuration);
-    currentMaterial.setFloat("num_bin", defaultBin);
+    currentMaterial.setFloat("num_bin", materialGranularity[i]);
     currentMaterial.setFloat("env_a", defaultA);
     currentMaterial.setFloat("env_d", defaultD);
     currentMaterial.setFloat("env_s", defaultS);
@@ -86,14 +89,22 @@ void setup() {
     currentMaterial.setInt("wave", defaultWave);
     materialJSON.setJSONObject(i, currentMaterial);
   }
-  
 
-  material = new MaterialCollection(); // Create our materialCollection
-  int[] newParameters = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Makeup some default parameters
+  materials = new MaterialCollection(); // Create our materialCollection
+  int[] defaultMaterialParameters = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Makeup some default parameters
 
   // Assign with dummy values and defaults
-  for (int i = 0; i < 11; i++) {
-    material.assign(i, "defaultName", true, int((i) * 10), newParameters, guiColors[i]);
+  for (int i = 0; i < materialSelectorNames.length; i++) {
+
+    materials.assign(i, "material" + str(i), true, 
+      materialGranularity[i], 
+      defaultFrecuency, 
+      defaultWaveForm, 
+      defaultAmplitude, 
+      defaultDuration, 
+      defaultADSR, 
+      defaultMaterialParameters, 
+      materialColors[i]);
   }
 
   // Set positions of material selectors
@@ -104,7 +115,7 @@ void setup() {
     materialSelectorPositions[i][3] = 35;
   }
 
-  // Set positions of scene selectors
+  // Set positions of edit selectors
   for (int i = 0; i < parameterSelectorNames.length; i++) { 
     sceneSwitcherPositions[i][0] = 100;
     sceneSwitcherPositions[i][1] = 20 + 65 * i;
@@ -112,11 +123,11 @@ void setup() {
     sceneSwitcherPositions[i][3] = 35;
   }
 
-  yellowSlider = new PhysicalSlider(this, 10);
+  yellowSlider = new PhysicalSlider(this, numVerticalButtons);
   yellowSlider.drawSlider(200, 25, 90, 700); 
-  redSlider = new PhysicalSlider(this, 10);
+  redSlider = new PhysicalSlider(this, numVerticalButtons);
   redSlider.drawSlider(400, 25, 90, 700);
-  blueSlider = new PhysicalSlider(this, 25);
+  blueSlider = new PhysicalSlider(this, numVerticalButtons);
   blueSlider.drawSlider(600, 25, 90, 700);
 
   saveButton = new Button(this, "Save");
@@ -124,16 +135,14 @@ void setup() {
   clearButton = new Button(this, "Clear");
   uploadButton = new Button(this, "Upload");
 
-  materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length, materialSelectorNames, guiColors); //number of buttons, names, colors
-  materialSelector.defaultColor(bgColor); //set a new default (should be same as background, probably)
-  parameterSelector = new uniqueSelectButtons(this, parameterSelectorNames.length, parameterSelectorNames, guiColors); //number of buttons, names, colors
-  parameterSelector.defaultColor(bgColor); //set a new default (should be same as background, probably)
+  materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length, materialSelectorNames, materialColors);
+  materialSelector.defaultColor(bgColor); 
+  parameterSelector = new uniqueSelectButtons(this, parameterSelectorNames.length, parameterSelectorNames, materialColors);
+  parameterSelector.defaultColor(bgColor);
 
-  textSize(15);
-
-  yellowGrains = new GrainCalculator(this, "yellow", yellowSlider, material, 1024); // slider to calculate, materialcollection to use, target range
-  redGrains = new GrainCalculator(this, "red", redSlider, material, 1024); // slider to calculate, materialcollection to use, target range
-  blueGrains = new GrainCalculator(this, "blue", blueSlider, material, 1024); // slider to calculate, materialcollection to use, target range
+  yellowGrains = new GrainCalculator(this, "yellow", yellowSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
+  redGrains = new GrainCalculator(this, "red", redSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
+  blueGrains = new GrainCalculator(this, "blue", blueSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
 }
 
 void draw() {
@@ -146,8 +155,9 @@ void draw() {
   clearButton.display(260, 770, 100, 35);
   uploadButton.display(380, 770, 100, 35);
 
-  materialSelector.display(materialSelectorPositions); // Display them and check for toggle status
-  parameterSelector.display(sceneSwitcherPositions); // Display them and check for toggle status
+  // Display material and parameter window selector
+  materialSelector.display(materialSelectorPositions);
+  parameterSelector.display(sceneSwitcherPositions);
 
   int toggleMaterial = materialSelector.activeButton(); // Get index of toggled button
   int toggleScene = parameterSelector.clickedButton();
@@ -155,11 +165,11 @@ void draw() {
   if (toggleMaterial!= -1) { // No value assigned case
 
     yellowSlider.assignValue(toggleMaterial);
-    yellowSlider.assignColor(guiColors[toggleMaterial]); //don't do this
+    yellowSlider.assignColor(materialColors[toggleMaterial]); //don't do this
     redSlider.assignValue(toggleMaterial);
-    redSlider.assignColor(guiColors[toggleMaterial]); //don't do this
+    redSlider.assignColor(materialColors[toggleMaterial]); //don't do this
     blueSlider.assignValue(toggleMaterial);
-    blueSlider.assignColor(guiColors[toggleMaterial]); //don't do this
+    blueSlider.assignColor(materialColors[toggleMaterial]); //don't do this
   } else {
 
     yellowSlider.assignColor(yellowSlider.defaultColor);
@@ -170,43 +180,45 @@ void draw() {
     redSlider.assignValue(toggleMaterial); //no value assigned
   }
 
+  // Display second window
   if (toggleScene!= -1) {
     if (saActive == false) {
       frame2Start(toggleScene, str(toggleScene));
       saActive = true;
     }
-  } else {
   }
 
+  // Display physical sliders
   yellowSlider.drawSlider(200, 25, 90, 700);
   redSlider.drawSlider(400, 25, 90, 700);
   blueSlider.drawSlider(600, 25, 90, 700);
 
-  //if (frame2Exit)
-  //{
-  //  frame2Start();
-  //}
-
-  // Buttons events
+  // Clear button event
   if (clearButton.isClicked()) {
     yellowSlider.clearSlider();
     redSlider.clearSlider();
     blueSlider.clearSlider();
   }
 
+  // Save button event
   if (saveButton.isClicked()) {
     saveJSONArray(materialJSON, "sequences/materials.json");
   }
 
+  // Load button event
   if (loadButton.isClicked()) {
   }
 
+  // Upload button event
   if (uploadButton.isClicked()) {
   }
 
+  // Update grains
   yellowGrains.updateGrains();
   redGrains.updateGrains();
   blueGrains.updateGrains();
+
+  println(yellowGrains.grainsPositions);
 }
 
 void frame2Start(int index, String name) {

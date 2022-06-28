@@ -20,13 +20,13 @@ public class ControlPoint extends Button {
 
   //use this for limiting the area in which a controlpoint can move
   void constrainPosition() { 
-    if (x()>xMax) {
+    if (x() > xMax) {
       setX(xMax);
     } else if (x() < xMin) {
       setX(xMin);
     }
 
-    if (y()>yMax) {
+    if (y() > yMax) {
       setY(yMax);
     } else if (y() < yMin) {
       setY(yMin);
@@ -57,7 +57,7 @@ public class ControlPoint extends Button {
         mouseOffsetY = parent.mouseY - buttonY;
         moving = true;
       }
-      println("[INFO] Button CLICKED");
+      println("[INFO] ControlPoint CLICKED!");
       buttonX = parent.mouseX - mouseOffsetX;
       buttonY = parent.mouseY - mouseOffsetY;
       if (!parent.mousePressed) {

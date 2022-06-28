@@ -154,7 +154,6 @@ public class Button {
     }
   }
 
-
   //on press behavior
   void activateKey() {
 
@@ -180,15 +179,14 @@ public class Button {
 
   //checks if curser is within bounds
   boolean hover() {
-    return parent.mouseX > buttonX & parent.mouseX < buttonX+buttonWidth 
-      & parent.mouseY > buttonY & parent.mouseY < buttonY+buttonHeight;
+    return parent.mouseX > buttonX & parent.mouseX < buttonX + buttonWidth 
+      & parent.mouseY > buttonY & parent.mouseY < buttonY + buttonHeight;
   }
 
   /// messing with colors
   void inactiveFill(int a, int b, int c) {
     boxInactive = color(a, b, c);
   }
-
 
   void activeFill(int a, int b, int c) {
     boxActive = color(a, b, c);
@@ -198,7 +196,6 @@ public class Button {
   void inactiveTextFill(int a, int b, int c) {
     textInactive = color(a, b, c);
   }
-
 
   void activeTextFill(int a, int b, int c) {
     textActive = color(a, b, c);

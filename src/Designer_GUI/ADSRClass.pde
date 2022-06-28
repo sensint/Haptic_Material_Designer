@@ -28,14 +28,17 @@ public class ADSR extends Button {
     yPosition = posY;
     xWidth = fieldWidth;
     yWidth = fieldHeight;
-    start.initialize(posX, posY + fieldHeight, 15, 15); //controlpoints are initialized with their position and dimensions
 
+    start.initialize(posX, posY + fieldHeight, 15, 15); //controlpoints are initialized with their position and dimensions
+    
     attack.initialize(posX + (fieldWidth / 4), posY, 15, 15);
 
     decay.initialize(posX + (fieldWidth / 4) * 2, posY + fieldHeight / 2, 15, 15);
     decay.constrainY(posY, posY + fieldHeight);
+
     sustain.initialize(posX + (fieldWidth / 4) * 3, posY + fieldHeight / 2, 15, 15);
     sustain.constrainY(posY, posY + fieldHeight);
+
     release.initialize(posX + fieldWidth, posY + fieldHeight, 15, 15);
     release.constrainY(posY + fieldHeight, posY + fieldHeight);
   }
@@ -44,19 +47,25 @@ public class ADSR extends Button {
 
   void displayControlPoints() {
     start.constrainX(xPosition, xPosition); //constraints prevent movement beyond certain points
-    start.constrainY(yPosition + xWidth, yPosition + xWidth);
+    start.constrainY(yPosition, yPosition + yWidth);    
     start.display();
+
     attack.constrainX(start.x(), decay.x()); //preventing the control point from creating invalid states
     attack.constrainY(yPosition, yPosition);
     attack.display();
 
     decay.constrainX(attack.x(), sustain.x());
+    decay.setY(sustain.y()); //setting the sutain point from being equal to decay
+    decay.constrainY(sustain.y(), sustain.y()); //need to also constrain it so as to prevent manually moving it away
+    // decay.constrainX(attack.x(), sustain.x());
     decay.display();
-    sustain.setY(decay.y()); //setting the sutain point from being equal to decay
-    sustain.constrainY(decay.y(), decay.y()); //need to also constrain it so as to prevent manually moving it away
+
+    //sustain.setY(decay.y()); //setting the sutain point from being equal to decay
+    //sustain.constrainY(decay.y(), decay.y()); //need to also constrain it so as to prevent manually moving it away
     sustain.constrainX(decay.x(), release.x());
     sustain.display();
-    release.constrainX(sustain.x(), parent.width);
+
+    release.constrainX(sustain.x(), xPosition + xWidth);
     release.display();
   }
 
@@ -70,6 +79,7 @@ public class ADSR extends Button {
 
   // put a box around the ADSR window
   void displayBox() {
+    parent.stroke(150);
     parent.line(xPosition, yPosition, xPosition, yPosition + yWidth);
     parent.line(xPosition, yPosition + yWidth, xPosition + xWidth, yPosition + yWidth);
     parent.line(xPosition + xWidth, yPosition + yWidth, xPosition + xWidth, yPosition);

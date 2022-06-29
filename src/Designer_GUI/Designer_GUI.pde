@@ -96,7 +96,7 @@ void setup() {
   // Assign with dummy values and defaults
   for (int i = 0; i < materialSelectorNames.length; i++) {
 
-    materials.assign(i, "material" + str(i), true, 
+    materials.assign(i, "material" + str(i), false, 
       materialGranularity[i], 
       defaultFrecuency, 
       defaultWaveForm, 

@@ -26,7 +26,7 @@ public class HapticEventSequence {
 
 public class Material {
   String name; //candy
-  boolean oneShot; // True if the material consists of discrete events, false for any continuous vibration 
+  boolean cvFlag; // True if the material consists of discrete events, false for any continuous vibration 
   int granularity;
   int[] parameters; // The actual data
   color displayColor; // Color to use in GUI
@@ -41,7 +41,7 @@ public class MaterialCollection {
   boolean[] assigned;
   String[] name;
   int[][] parameters; // This should just be an int array
-  boolean[] oneShot;
+  boolean[] cvFlag;
   color[] displayColor;
   int[] materialGranularity;
   int[] materialFrecuencies;
@@ -50,11 +50,12 @@ public class MaterialCollection {
   float[] materialDurations;
   float[][] materialADSR;
 
+
   //constructor without position
   MaterialCollection() {
     name = new String[11];
     parameters = new int[11][10];
-    oneShot = new boolean[11];
+    cvFlag = new boolean[11];
     assigned = new boolean[11];
     displayColor = new color[11];
     materialGranularity = new int[11];
@@ -72,7 +73,7 @@ public class MaterialCollection {
   void assign(int index, Material m) {
     if ((index >= 0) && (index < 11)) {
       name[index] = m.name;
-      oneShot[index] = m.oneShot;
+      cvFlag[index] = m.cvFlag;
       materialGranularity[index] = m.granularity;
       parameters[index] = m.parameters;
       displayColor[index] = m.displayColor;
@@ -82,10 +83,10 @@ public class MaterialCollection {
     }
   }
 
-  void assign(int index, String newName, boolean newOneShot, int newGranularity, int newFrecuency, int newWave, float newAmplitude, float newDuration, float[] newADSR, int[] newParameters, color newColor) {
+  void assign(int index, String newName, boolean newcvFlag, int newGranularity, int newFrecuency, int newWave, float newAmplitude, float newDuration, float[] newADSR, int[] newParameters, color newColor) {
     if ((index >= 0) && (index < 11)) {
       name[index] = newName;
-      oneShot[index] = newOneShot;
+      cvFlag[index] = newcvFlag;
 
       parameters[index] = newParameters;
       displayColor[index] = newColor;

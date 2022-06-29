@@ -5,13 +5,15 @@ class SecondApplet extends PApplet {
   int materialIndex;
 
   // UI Elements
-  uniqueSelectButtons waveSelector; // material selectors
-  Button saveButton, resetButton, cvButton;
-  Slider frecuencySlider, amplitudeSlider, durationSlider, grainSlider;
-  DiscreteSlider theSlider;
+  uniqueSelectButtons waveSelector, cvSelector;
+  Button saveButton, resetButton;
+  Slider amplitudeSlider, durationSlider;
+  DiscreteSlider frecuencySlider, grainSlider;
   ADSR envelope;
 
   String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Pulse"};
+  String[] cvSelectorName = {"CV"};
+  int[][] cvSelectorPositions = new int [1][4];
   int[][] waveSelectorPositions = new int[4][4];
 
   // Positions/size of the envelope box
@@ -28,7 +30,7 @@ class SecondApplet extends PApplet {
   }
 
   public void settings() {
-    size(700, 800);
+    size(800, 800);
   }
 
   public void setup() {
@@ -36,19 +38,22 @@ class SecondApplet extends PApplet {
     textSize(15);
     surface.setTitle("Material designer for Material " + materialName);
 
-    frecuencySlider= new Slider(this, "Frequency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex]);
+    // frecuencySlider= new Slider(this, "Frequency", 'r', minFrecuency, maxFrecuency,);
     amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex]);
     durationSlider= new Slider(this, "Duration", 'r', minDuration, maxDuration, materials.materialDurations[materialIndex]);
-    grainSlider= new Slider(this, "Grains", 'r', minBin, maxBin, materials.materialGranularity[materialIndex] / 10);
+    // grainSlider= new Slider(this, "Grains", 'r', minBin, maxBin, materials.materialGranularity[materialIndex] / 10);
 
     // Discrete slider
-    theSlider = new DiscreteSlider(this, "Discrete", 'r', 300, 35);
-    theSlider.assignSteps(10);
-    theSlider.assignRange(0, 10);
+    // theSlider = new DiscreteSlider(this, "Discrete", 'r', 300, 35);
+    // theSlider.assignSteps(10);
+    // theSlider.assignRange(0, 10);
+
+    //frecuencySlider = new DiscreteSlider(this, "Frecuency", 'r', 300, 35);
+    frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency);
+    grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex] / 10, maxBin - minBin);
 
     saveButton = new Button(this, "Save", 'w');
     resetButton = new Button(this, "Reset", 'w');
-    cvButton = new Button(this, "CV", 'w');
 
     envelope = new ADSR(this, "envelope");
     envelope.initialize(xPos, yPos, boxHeight, boxWidth);
@@ -61,9 +66,23 @@ class SecondApplet extends PApplet {
       waveSelectorPositions[i][3] = 40;
     }
 
+    for (int i = 0; i < cvSelectorName.length; i++) { 
+      cvSelectorPositions[i][0] = 20;
+      cvSelectorPositions[i][1] = 20 + 80 * 3;
+      cvSelectorPositions[i][2] = 40;
+      cvSelectorPositions[i][3] = 40;
+    }
+
     waveSelector = new uniqueSelectButtons(this, waveSelectorName.length, waveSelectorName, subset(materialColors, 0, 4));
     waveSelector.defaultColor(bgColor); //set a new default (should be same as background, probably)
     waveSelector.setValue(materials.materialWaves[materialIndex]); // Set default value
+
+    cvSelector = new uniqueSelectButtons(this, cvSelectorName.length, cvSelectorName, subset(materialColors, 0, 1));
+    cvSelector.defaultColor(bgColor);
+
+    if (materials.cvFlag[materialIndex] == true) {
+      cvSelector.setValue(0);
+    }
   }
 
   public void draw() {
@@ -71,22 +90,26 @@ class SecondApplet extends PApplet {
     this.background(32, 36, 48);
 
     // Display sliders
-    int sliderSep = 70;
+    int sliderSep = 80;
     this.fill(78, 89, 111);  
-    frecuencySlider.display(20, 20, 500, 35);
+    frecuencySlider.display(20, 20, 500, 40);
     this.fill(78, 89, 111); 
-    amplitudeSlider.display(20, 20 + sliderSep, 500, 35);
+    amplitudeSlider.display(20, 20 + sliderSep, 500, 40);
     this.fill(78, 89, 111); 
-    durationSlider.display(20, 20 + sliderSep * 2, 500, 35);
-    this.fill(78, 89, 111); 
-    grainSlider.display(70, 20 + sliderSep * 3, 550, 35);
+    durationSlider.display(20, 20 + sliderSep * 2, 500, 40);
 
     this.fill(112, 180, 175); 
-    theSlider.display(20, 20 + sliderSep * 4, 500, 35);
+    //theSlider.display(20, 20 + sliderSep * 4, 500, 35);
 
     // Display wave selector
     this.fill(112, 190, 175); 
-    waveSelector.display(waveSelectorPositions); 
+    waveSelector.display(waveSelectorPositions);
+    cvSelector.display(cvSelectorPositions);
+
+    if (cvSelector.activeButton() == -1) {
+      this.fill(78, 89, 111); 
+      grainSlider.display(70, 20 + sliderSep * 3, 440, 40);
+    }
 
     // Display ADSR
     this.fill(78, 89, 111);
@@ -101,11 +124,6 @@ class SecondApplet extends PApplet {
     saveButton.display(20, 740, 70, 30);
     this.fill(112, 150, 175);
     resetButton.display(100, 740, 70, 30);
-
-    cvButton.display(20, 20 + sliderSep * 3, 35, 35);
-
-    // slider 
-    // theSlider.displayHandle();
 
     // Button events
     if (saveButton.isClicked()) {
@@ -138,10 +156,10 @@ class SecondApplet extends PApplet {
 
       JSONObject currentMaterial = new JSONObject();
       currentMaterial.setInt("id", materialIndex);
-      currentMaterial.setFloat("frecuency", frecuencySlider.getSliderValue());
+      // currentMaterial.setFloat("frecuency", frecuencySlider.getSliderValue());
       currentMaterial.setFloat("amplitude", amplitudeSlider.getSliderValue());
       currentMaterial.setFloat("duration", durationSlider.getSliderValue());
-      currentMaterial.setFloat("num_bin", grainSlider.getSliderValue());
+      //currentMaterial.setFloat("num_bin", grainSlider.getSliderValue());
       currentMaterial.setFloat("env_a", env_a);
       currentMaterial.setFloat("env_d", env_d);
       currentMaterial.setFloat("env_s", env_s);
@@ -154,9 +172,14 @@ class SecondApplet extends PApplet {
       // Update material properties
       // materialGranularity[materialIndex] = int(grainSlider.getSliderValue());
       materials.materialGranularity[materialIndex] =  round(grainSlider.getSliderValue() * 10);
-      materials.materialFrecuencies[materialIndex] = round(frecuencySlider.getSliderValue());
+      //materials.materialFrecuencies[materialIndex] = round(frecuencySlider.getSliderValue());
       materials.materialAmplitudes[materialIndex] = amplitudeSlider.getSliderValue();
       materials.materialWaves[materialIndex] = waveSelector.activeButton();
+      if (cvSelector.activeButton() == -1) {
+        materials.cvFlag[materialIndex] = false;
+      } else {
+        materials.cvFlag[materialIndex] = true;
+      }
 
       yellowGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
       redGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
@@ -164,10 +187,10 @@ class SecondApplet extends PApplet {
     }
 
     if (resetButton.isClicked()) {
-      frecuencySlider.setSliderValue(defaultFrecuency);
+      //frecuencySlider.setSliderValue(defaultFrecuency);
       amplitudeSlider.setSliderValue(defaultAmplitude);
       durationSlider.setSliderValue(defaultDuration);
-      grainSlider.setSliderValue(float(materialGranularity[materialIndex] + 1));
+      //grainSlider.setSliderValue(float(materialGranularity[materialIndex] + 1));
       waveSelector.setValue(defaultWave);
     }
   }

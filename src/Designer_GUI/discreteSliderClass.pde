@@ -16,18 +16,16 @@ public class DiscreteSlider extends Button {
   }
 
   //constructor without position
-  DiscreteSlider(PApplet parent, String name, char shortcut) {
+  DiscreteSlider(PApplet parent, String name, char shortcut, int min, int max, int value, int stepnumber) {
     super(parent, name, shortcut);
-  }
-
-  void assignSteps(int stepnumber) {
+    sliderValue = value;
+    sliderMin = min;
+    sliderMax = max;
     steps = stepnumber;
   }
 
-  void assignRange(int min, int max) { //we tell the slider what its range is here
-    sliderMin = min;
-    sliderMax = max;
-    sliderValue = min;
+  void setValue(int value) {
+    sliderValue = value;
   }
 
   //alternate constructor, if we want to give it new coordinates
@@ -36,22 +34,12 @@ public class DiscreteSlider extends Button {
 
     // parent.stroke(255);
 
-    // float currentSliderPosition = (this.getSliderValue() / float(steps-1)) * super.buttonWidth;
-    float currentSliderPosition = this.getSliderValue();
-    println("[INFO] CurrentSliderPosition: " + str(currentSliderPosition));
-
-    // draw indicator
-    // parent.strokeWeight(1);
-    // int correctedPos = round(((super.buttonWidth)/steps * this.getSliderValue2()) + super.buttonX;
-
     // display indicator
     parent.fill(indicatorColor);
-    // parent.rect(super.buttonX + currentSliderPosition, super.buttonY, 2, super.buttonHeight);
-    parent.rect(this.correctedPos(), super.buttonY, 2, super.buttonHeight);
-    // parent.rect(correctedPos, super.buttonY, 5, super.buttonHeight);
+    parent.rect(this.correctedPos(), super.buttonY, 3, super.buttonHeight);
     
     // display text
-    parent.text(str(this.getSliderValueFinal()), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2)); //add the value, so you know what you're doing
+    parent.text(str(this.getSliderValue()), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2));
     
     // draw lines
     float stepWidth = super.buttonWidth / (steps);
@@ -87,18 +75,8 @@ public class DiscreteSlider extends Button {
     }
   }
 
-  int getSliderValue() {
-    float tempPosition = map(sliderPosition, super.buttonX, super.buttonX + super.buttonWidth, sliderMin, sliderMax);
-    sliderValue = int(tempPosition * float(steps));
-    println("Slider position: " + sliderPosition + " Slidervalue: " + sliderValue + " Temp value: " +  tempPosition + " Slidermax: " + sliderMax);
-    // return sliderValue;
-    return sliderPosition;
-  }
-
-  int getSliderValueFinal(){
+  int getSliderValue(){
     int tempVar = round(map(sliderPosition, 0, super.buttonWidth, sliderMin, sliderMax));
-    println("LALALA --- " + str(sliderPosition));
-    println("MAPMAP --- " + str(tempVar));
     return tempVar;
   }
 

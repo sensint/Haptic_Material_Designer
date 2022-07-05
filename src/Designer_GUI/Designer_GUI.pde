@@ -160,7 +160,7 @@ void setup() {
   saveButton = new Button(this, "Save");
   loadButton = new Button(this, "Load");
   clearButton = new Button(this, "Clear");
-  uploadButton = new Button(this, "Upload");
+  uploadButton = new Button(this, "Upload", 'G');
 
   materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length, materialSelectorNames, materialColors);
   materialSelector.defaultColor(bgColor); 
@@ -242,14 +242,15 @@ void draw() {
   }
 
   // Upload button event
-  if (uploadButton.isClicked()) {
-    String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-    printArray(materialPositions);
-    for (int i=0; i < materialPositions.length; i++) {
-      // myPort.write(byte(int(materialPositions[i])));
-      myPort.write(materialPositions[i]);
-    }
-  }
+  //if (uploadButton.isClicked()) {
+  //  String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+  //  printArray(materialPositions);
+  //  for (int i=0; i < materialPositions.length; i++) {
+  //    // myPort.write(byte(int(materialPositions[i])));
+  //    myPort.write(materialPositions[i]);
+  //  }
+  //  println("SEND IT!");
+  //}
 
   // Update grains
   yellowGrains.updateGrains();
@@ -262,4 +263,20 @@ void draw() {
 void frame2Start(int index, String name) {
   sa = new SecondApplet(name, index);
   frame2Exit = false;
+}
+
+void mouseReleased()
+{
+  // Upload button event
+  if (uploadButton.isClicked()) {
+    String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+    // printArray(materialPositions);
+    for (int i=0; i < materialPositions.length; i++) {
+      // myPort.write(byte(int(materialPositions[i])));
+      myPort.write(materialPositions[i]);
+      println(materialPositions[i]);
+    }
+    println("SEND IT!");
+     myPort.clear();
+  }
 }

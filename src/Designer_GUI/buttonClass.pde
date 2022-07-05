@@ -23,6 +23,7 @@ public class Button {
   color boxInactive = color(255, 0, 0);
   color textActive = color(255, 0, 0);
   color textInactive = color(255);
+  boolean released;
 
   //createButton (its actually a switch)
   Button(PApplet parent, String name, char shortcut) {
@@ -33,6 +34,7 @@ public class Button {
     checkKey = true;
     hotKeyHit = false;
     clicked = false;
+    released = false;
     buttonX = 0;
     buttonY = 0;
     buttonWidth = 100;
@@ -50,6 +52,7 @@ public class Button {
     this.parent = parent;
     
     displayName = true;
+    released = false;
     checkMouse = true;
     checkKey = true;
     hotKeyHit = false;
@@ -152,6 +155,8 @@ public class Button {
     if (!hover()) {
       readyForClick = false;
     }
+    
+
   }
 
   //on press behavior

@@ -71,13 +71,13 @@ public class PhysicalSlider {
   void assignColor(color newColor) {
 
     parent.stroke(100);
-    for (int i = 0; i < buttonArray.length; i++) { //<>//
+    for (int i = 0; i < buttonArray.length; i++) { //<>// //<>// //<>//
 
       if (buttonArray[i].isToggled()) {
 
         //if a button is newly toggled, we check what our currently active color
         //we then write the color value to the array where we keep track of all colors
-        toggleColor[i] =newColor;
+        toggleColor[i] = newColor;
 
         //<--- assign properties to array here
       }
@@ -87,4 +87,5 @@ public class PhysicalSlider {
   void defaultColor(color newDefault) {
     defaultColor = newDefault;
   }
+  
 }

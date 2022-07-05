@@ -42,7 +42,7 @@ public class Button {
     readyForClick = false;
     buttonName = name;
     hotKey = shortcut;
-    println("[INFO] Button created: Name: " + buttonName + ", HotKey: " + hotKey);
+    // println("[INFO] Button created: Name: " + buttonName + ", HotKey: " + hotKey);
     state = false;
   }
 
@@ -62,7 +62,7 @@ public class Button {
     nameOffsetY = 15;
     readyForClick = false;
     buttonName = name;
-    println("[INFO] Button created: Name: " + buttonName + ", HotKey: " + hotKey);
+    // println("[INFO] Button created: Name: " + buttonName + ", HotKey: " + hotKey);
     state = false;
     
   }

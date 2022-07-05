@@ -60,7 +60,7 @@ public class GrainCalculator {
     regionCounter = 0;
     globalGrainID = 0;
 
-    println("[INFO] Begin ARRAY " + this.name);
+    // println("[INFO] Begin ARRAY " + this.name);
 
     grainsPositions.clear();
 
@@ -95,7 +95,7 @@ public class GrainCalculator {
       }
     }
 
-    println("[INFO] End ARRAY");
+    // println("[INFO] End ARRAY");
     parent.stroke(0);
   }
 
@@ -114,8 +114,6 @@ public class GrainCalculator {
     parent.stroke(255);
     parent.line(xPosition, lineIndexStart * segmentSize + yPosition, xPosition, lineIndexEnd * segmentSize + yPosition); //draw that line
 
-
-
     for (int y = 0; y < grainNumber; y++) {
       parent.fill(255);
 
@@ -130,10 +128,10 @@ public class GrainCalculator {
           // half its grain spacing (move the first one up half a step to centre it)
 
           //(startof segment + exact position within segment + scaler for range of 0 to 1000
-          print("grainRegion: " + regionCounter + " localGrainID: " + y);
-          print("," +  "\t" + " GrainID " +  grainID);
-          print(", " +  "\t" + " at " + grainPosition * scalarForOutput);
-          println("," +  "\t" + " \t" + " with material " + granularityPointer[i]);
+          //print("grainRegion: " + regionCounter + " localGrainID: " + y);
+          //print("," +  "\t" + " GrainID " +  grainID);
+          //print(", " +  "\t" + " at " + grainPosition * scalarForOutput);
+          //println("," +  "\t" + " \t" + " with material " + granularityPointer[i]);
 
           grainsPositions.add(grainPosition * scalarForOutput);
 

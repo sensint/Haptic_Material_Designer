@@ -30,7 +30,7 @@ class SecondApplet extends PApplet {
   }
 
   public void settings() {
-    size(800, 800);
+    size(600, 800);
   }
 
   public void setup() {
@@ -43,17 +43,13 @@ class SecondApplet extends PApplet {
     durationSlider= new Slider(this, "Duration", 'r', minDuration, maxDuration, materials.materialDurations[materialIndex]);
     // grainSlider= new Slider(this, "Grains", 'r', minBin, maxBin, materials.materialGranularity[materialIndex] / 10);
 
-    // Discrete slider
-    // theSlider = new DiscreteSlider(this, "Discrete", 'r', 300, 35);
-    // theSlider.assignSteps(10);
-    // theSlider.assignRange(0, 10);
-
     //frecuencySlider = new DiscreteSlider(this, "Frecuency", 'r', 300, 35);
     frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency);
+    frecuencySlider.showTicks(false);
     grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex] / 10, maxBin - minBin);
 
-    saveButton = new Button(this, "Save", 'w');
-    resetButton = new Button(this, "Reset", 'w');
+    saveButton = new Button(this, "Save", 's');
+    resetButton = new Button(this, "Reset", 'r');
 
     envelope = new ADSR(this, "envelope");
     envelope.initialize(xPos, yPos, boxHeight, boxWidth);
@@ -98,9 +94,6 @@ class SecondApplet extends PApplet {
     this.fill(78, 89, 111); 
     durationSlider.display(20, 20 + sliderSep * 2, 500, 40);
 
-    this.fill(112, 180, 175); 
-    //theSlider.display(20, 20 + sliderSep * 4, 500, 35);
-
     // Display wave selector
     this.fill(112, 190, 175); 
     waveSelector.display(waveSelectorPositions);
@@ -116,7 +109,6 @@ class SecondApplet extends PApplet {
     envelope.displayArea();
     this.fill(255, 255, 255);
     envelope.displayControlPoints();
-
     envelope.displayBox();
 
     // Display buttons

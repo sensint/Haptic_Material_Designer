@@ -1,3 +1,5 @@
+import processing.serial.*;
+
 JSONObject data; // Data
 JSONArray materialJSON;
 
@@ -6,6 +8,10 @@ boolean frame2Exit;
 SecondApplet sa;
 boolean saActive = false;
 
+Serial myPort;
+
+// Responsive screen
+
 // Default values
 int defaultFrecuency = 200;
 int minFrecuency = 0;
@@ -13,9 +19,9 @@ int maxFrecuency = 500;
 float defaultAmplitude = 0.5;
 int minAmplitude = 0;
 int maxAmplitude = 1;
-float defaultDuration = 200;
-int minDuration = 0;
-int maxDuration = 1000;
+float defaultDuration = 4;
+int minDuration = 2;
+int maxDuration = 20;
 int minBin = 0;
 int maxBin = 10;
 int defaultWaveForm = 0;
@@ -57,19 +63,37 @@ color[] materialColors = {
   color(27, 154, 170), 
   color(17, 184, 165), 
   color(6, 214, 160), 
-  color(5, 200, 129), 
-  color(18, 18, 18)
+  color(5, 200, 129)
 };
 
 // FIRST WINDOWS ---------------------------------------------------------
 
+String[] getMaterialSequence(color[] sliderColors, color[] materialColors) {
+  String[] temp = new String[10];
+  for (int i = 0; i < sliderColors.length; i++) {
+    for (int j = 0; j < materialColors.length; j++) {
+      if (sliderColors[i] == materialColors[j]) {
+        // temp[i] = "M" + str(j);
+        temp[i] = str(j);
+      }
+    }
+  }
+  return temp;
+}
+
 void settings() {
-  size(760, 860);
+  size(int(displayWidth * 0.4), int(displayHeight * 0.8));
 }
 
 void setup() {
 
   textSize(15);
+
+  println("Ports");
+  printArray(Serial.list());
+
+  myPort = new Serial(this, Serial.list()[0], 115200);
+  print(Serial.list()[0]);
 
   data = new JSONObject();
   materialJSON = new JSONArray();
@@ -77,16 +101,17 @@ void setup() {
   for (int i = 0; i < materialSelectorNames.length; i++) {
     JSONObject currentMaterial = new JSONObject();
 
-    currentMaterial.setInt("id", i);
+    currentMaterial.setString("id", "M" + str(i));
     currentMaterial.setFloat("frecuency", defaultFrecuency);
     currentMaterial.setFloat("amplitude", defaultAmplitude);
     currentMaterial.setFloat("duration", defaultDuration);
-    currentMaterial.setFloat("num_bin", materialGranularity[i]);
+    currentMaterial.setFloat("grains", materialGranularity[i]);
     currentMaterial.setFloat("env_a", defaultA);
     currentMaterial.setFloat("env_d", defaultD);
     currentMaterial.setFloat("env_s", defaultS);
     currentMaterial.setFloat("env_r", defaultR);
     currentMaterial.setInt("wave", defaultWave);
+    currentMaterial.setBoolean("cv", false);
     materialJSON.setJSONObject(i, currentMaterial);
   }
 
@@ -95,8 +120,10 @@ void setup() {
 
   // Assign with dummy values and defaults
   for (int i = 0; i < materialSelectorNames.length; i++) {
-
-    materials.assign(i, "material" + str(i), false, 
+    materials.assign(
+      i, 
+      "material" + str(i), 
+      false, 
       materialGranularity[i], 
       defaultFrecuency, 
       defaultWaveForm, 
@@ -207,10 +234,21 @@ void draw() {
 
   // Load button event
   if (loadButton.isClicked()) {
+
+    String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+
+    printArray(materialPositions);
+    println(".........................");
   }
 
   // Upload button event
   if (uploadButton.isClicked()) {
+    String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+    printArray(materialPositions);
+    for (int i=0; i < materialPositions.length; i++) {
+      // myPort.write(byte(int(materialPositions[i])));
+      myPort.write(materialPositions[i]);
+    }
   }
 
   // Update grains
@@ -218,7 +256,7 @@ void draw() {
   redGrains.updateGrains();
   blueGrains.updateGrains();
 
-  println(yellowGrains.grainsPositions);
+  // println(yellowGrains.grainsPositions);
 }
 
 void frame2Start(int index, String name) {

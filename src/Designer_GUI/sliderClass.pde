@@ -33,7 +33,7 @@ public class Slider extends Button {
     super.display(a, b, c, d);
     sliderPosition = int(super.buttonWidth * ((sliderValue - sliderMin)/(sliderMax - sliderMin))) + super.buttonX;
     displayIndicator();
-    parent.text(str(sliderValue), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
+    parent.text(nf(sliderValue, 0, 1), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
   }
 
   void displayIndicator() {

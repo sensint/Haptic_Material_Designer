@@ -274,9 +274,10 @@ void mouseReleased()
     for (int i=0; i < materialPositions.length; i++) {
       // myPort.write(byte(int(materialPositions[i])));
       myPort.write(materialPositions[i]);
+      myPort.write(",");
       println(materialPositions[i]);
     }
     println("SEND IT!");
-     myPort.clear();
+     // myPort.clear();
   }
 }

@@ -15,8 +15,9 @@ public class GrainCalculator {
   String name; // <----- update and use for debug
 
   ArrayList<Float> grainsPositions = new ArrayList<Float>();
+  ArrayList<Integer> grainsMaterials = new ArrayList<Integer>();
   int[] grainsGlobalIds;
-  int[] grainsMaterials;
+  //int[] grainsMaterials;
 
   int xPosition;
   int yPosition;
@@ -43,13 +44,12 @@ public class GrainCalculator {
     //
     //  scalarForOutput = 1000 / yellowSlider.sliderHeight;
     //  yellowSlider.state[i]
-    
+
     //for (int i = 0; i < this.granularity.length; i++) {
     //  println(int(granularity[i]));
     //  this.granularity[i] = this.granularity[i] * 3;
     //  println(int(this.granularity[i]));
     //}
-    
   }
 
   void updateGrains() {
@@ -63,6 +63,7 @@ public class GrainCalculator {
     // println("[INFO] Begin ARRAY " + this.name);
 
     grainsPositions.clear();
+    grainsMaterials.clear();
 
     for (int i = 0; i < binNumber; i++) { //loop through the array
 
@@ -134,11 +135,12 @@ public class GrainCalculator {
           //println("," +  "\t" + " \t" + " with material " + granularityPointer[i]);
 
           grainsPositions.add(grainPosition * scalarForOutput);
+          grainsMaterials.add(displayColor[granularityPointer[i]]);
 
-          // Save Grain Data
+            // Save Grain Data
 
-          //todo: find the modulo (?) and add half of it to the beginning, so grains are spaced evenly
-          parent.stroke(displayColor[granularityPointer[i]]);
+            //todo: find the modulo (?) and add half of it to the beginning, so grains are spaced evenly
+            parent.stroke(displayColor[granularityPointer[i]]);
           // drawGrain(xPosition, grainPosition + yPosition, 19, 11); //uneven numbers re prettier
           drawGrain(xPosition, grainPosition + yPosition, 13, 7); // uneven numbers re prettier
           grainID = grainID + 1;

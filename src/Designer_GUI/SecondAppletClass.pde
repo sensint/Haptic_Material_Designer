@@ -44,9 +44,9 @@ class SecondApplet extends PApplet {
     // grainSlider= new Slider(this, "Grains", 'r', minBin, maxBin, materials.materialGranularity[materialIndex] / 10);
 
     //frecuencySlider = new DiscreteSlider(this, "Frecuency", 'r', 300, 35);
-    frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency);
+    frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500);
     frecuencySlider.showTicks(false);
-    grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex] / 10, maxBin - minBin);
+    grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex] / 10, maxBin - minBin, 440);
 
     saveButton = new Button(this, "Save", 's');
     resetButton = new Button(this, "Reset", 'r');
@@ -112,9 +112,7 @@ class SecondApplet extends PApplet {
     envelope.displayBox();
 
     // Display buttons
-    this.fill(132, 120, 175);
     saveButton.display(20, 740, 70, 30);
-    this.fill(112, 150, 175);
     resetButton.display(100, 740, 70, 30);
 
     // Button events
@@ -164,7 +162,7 @@ class SecondApplet extends PApplet {
       // Update material properties
       // materialGranularity[materialIndex] = int(grainSlider.getSliderValue());
       materials.materialGranularity[materialIndex] =  round(grainSlider.getSliderValue() * 10);
-      //materials.materialFrecuencies[materialIndex] = round(frecuencySlider.getSliderValue());
+      materials.materialFrecuencies[materialIndex] = round(frecuencySlider.getSliderValue());
       materials.materialAmplitudes[materialIndex] = amplitudeSlider.getSliderValue();
       materials.materialWaves[materialIndex] = waveSelector.activeButton();
       if (cvSelector.activeButton() == -1) {

@@ -13,7 +13,7 @@ Serial myPort;
 // Responsive screen
 
 // Default values
-int defaultFrecuency = 200;
+int defaultFrecuency = 143;
 int minFrecuency = 0;
 int maxFrecuency = 500;
 float defaultAmplitude = 0.5;
@@ -80,6 +80,8 @@ String[] getMaterialSequence(color[] sliderColors, color[] materialColors) {
   }
   return temp;
 }
+
+
 
 void settings() {
   size(int(displayWidth * 0.4), int(displayHeight * 0.8));
@@ -242,22 +244,33 @@ void draw() {
   }
 
   // Upload button event
-  //if (uploadButton.isClicked()) {
-  //  String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-  //  printArray(materialPositions);
-  //  for (int i=0; i < materialPositions.length; i++) {
-  //    // myPort.write(byte(int(materialPositions[i])));
-  //    myPort.write(materialPositions[i]);
-  //  }
-  //  println("SEND IT!");
-  //}
+  if (uploadButton.isClicked()) {
+    //  String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+    //  printArray(materialPositions);
+    //  for (int i=0; i < materialPositions.length; i++) {
+    //    // myPort.write(byte(int(materialPositions[i])));
+    //    myPort.write(materialPositions[i]);
+    //  }
+    //  println("SEND IT!");
+    
+    // Upload grain positions
+    myPort.write("POSITIONS");
+    myPort.write(";");
+    for(int i=0; i<yellowGrains.grainsPositions.size(); i++){
+      myPort.write(yellowGrains.grainsPositions.get(i).toString());
+      myPort.write("-");
+    }
+    myPort.write(";");
+  }
 
   // Update grains
   yellowGrains.updateGrains();
   redGrains.updateGrains();
   blueGrains.updateGrains();
 
-  // println(yellowGrains.grainsPositions);
+  println(yellowGrains.grainsPositions);
+  println(yellowGrains.grainsMaterials);
+  // println(yellowGrains.grainsPositions.size());
 }
 
 void frame2Start(int index, String name) {
@@ -278,6 +291,6 @@ void mouseReleased()
       println(materialPositions[i]);
     }
     println("SEND IT!");
-     // myPort.clear();
+    // myPort.clear();
   }
 }

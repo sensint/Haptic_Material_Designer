@@ -4,6 +4,7 @@ public class DiscreteSlider extends Button {
   int sliderMin;
   int sliderMax;
   int steps;
+  String name;
   color indicatorColor = color(255, 255, 255);
   boolean ticks = true;
 
@@ -17,19 +18,25 @@ public class DiscreteSlider extends Button {
   }
 
   //constructor without position
-  DiscreteSlider(PApplet parent, String name, char shortcut, int min, int max, int value, int stepnumber) {
+  DiscreteSlider(PApplet parent, String name, char shortcut, int min, int max, int value, int stepnumber, int wi) {
     super(parent, name, shortcut);
     sliderValue = value;
     sliderMin = min;
     sliderMax = max;
     steps = stepnumber;
+    //sliderPosition = int(map(value, sliderMin, sliderMax, sliderMin, sliderMax));
+    sliderPosition = value * (wi / (steps));
+    //println(name + " - SLIDER POSITION 1: " + str(sliderPosition));
+    //println(name + " - STEPH WITH: " + str((wi / (steps))));
+    this.name = name;
+
   }
 
   void setValue(int value) {
     sliderValue = value;
   }
-  
-  void showTicks(boolean value){
+
+  void showTicks(boolean value) {
     ticks = value;
   }
 
@@ -41,18 +48,22 @@ public class DiscreteSlider extends Button {
 
     // display indicator
     parent.fill(indicatorColor);
-    parent.rect(this.correctedPos(), super.buttonY, 3, super.buttonHeight);
+    parent.rect(this.indicatorPos(), super.buttonY, 3, super.buttonHeight);
 
     // display text
     parent.text(str(this.getSliderValue()), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2));
 
     // draw lines
     if (ticks == true) {
-      float stepWidth = super.buttonWidth / (steps);
-      for (int i = 0; i < steps + 1; i++) {
-        parent.stroke(255);
-        parent.line(super.buttonX + int(stepWidth * i), super.buttonY + (super.buttonHeight/2), super.buttonX + int(stepWidth * i), super.buttonHeight + super.buttonY);
-      }
+      drawTicks();
+    }
+  }
+
+  void drawTicks() {
+    float stepWidth = super.buttonWidth / (steps);
+    for (int i = 0; i < steps + 1; i++) {
+      parent.stroke(255);
+      parent.line(super.buttonX + int(stepWidth * i), super.buttonY + (super.buttonHeight/2), super.buttonX + int(stepWidth * i), super.buttonHeight + super.buttonY);
     }
   }
 
@@ -86,9 +97,11 @@ public class DiscreteSlider extends Button {
     return tempVar;
   }
 
-  int correctedPos() {
+  int indicatorPos() {
     int currentStep = round(((float)steps)*(sliderPosition)/super.buttonWidth);
     int correc = round(((float)super.buttonWidth)/steps*currentStep) + super.buttonX;
+    //println(this.name + " - SLIDER POSITION 2: " + str(sliderPosition));
+    //println(this.name + " - CORREC: " + str(correc));
     return correc;
   }
 }

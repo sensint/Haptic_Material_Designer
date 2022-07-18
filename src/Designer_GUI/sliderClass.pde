@@ -10,114 +10,120 @@
 //a slider is a button that does not toggle, instead it returns a value
 
 public class Slider extends Button {
-  float sliderValue;
-  int sliderPosition;
-  int sliderMin;
-  int sliderMax;
-  boolean active;
-  color indicatorColor = color(255,255,255);
+    float sliderValue;
+    int sliderPosition;
+    int sliderMin;
+    int sliderMax;
+    boolean active;
+    color indicatorColor = color(255, 255, 255);
 
-  // Constructor without position
-  Slider(PApplet parent, String name, char shortcut, int min, int max, float defaultValue) {
-    super(parent, name, shortcut);
-    //sliderValue = 0.5;
-    //sliderMin = 0;
-    //sliderMax = 1;
-    sliderValue = defaultValue;
-    sliderMin = min;
-    sliderMax = max;
-    active = false;
-  }
-
-  void display(int a, int b, int c, int d) {
-    super.display(a, b, c, d);
-    sliderPosition = int(super.buttonWidth * ((sliderValue - sliderMin)/(sliderMax - sliderMin))) + super.buttonX;
-    displayIndicator();
-    parent.text(nf(sliderValue, 0, 1), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
-  }
-
-  void displayIndicator() {
-    parent.fill(indicatorColor);
-    parent.rect(sliderPosition, super.buttonY, 3, super.buttonHeight);
-  }
-
-  //create the slider
-  //void display(int x, int y, int w, int h) {
-  //  buttonX = x;
-  //  buttonY = y;
-  //  buttonWidth = w;
-  //  buttonHeight = h;
-  //  sliderPosition = int(buttonWidth*sliderValue)+buttonX;
-
-  //  fill(state? boxActive:boxInactive); //color of rectangle
-  //  rect(buttonX, buttonY, buttonWidth, buttonHeight);
-  //  stroke(255, 0, 0);
-  //  fill(indicatorColor);
-  //  rect(sliderPosition-2, buttonY, 4, buttonHeight);
-
-  //  if (this.checkMouse) {
-  //    this.activateClick();
-  //  }
-  //  if (this.checkKey) {
-  //    this.activateKey();
-  //  }
-  //  if (displayName) {
-  //    fill(state? textActive:textInactive); //color of name
-  //    text(buttonName, buttonX+nameOffsetX, buttonY+nameOffsetY+buttonHeight);
-  //    // fill(state? highGreen:highRed);  //color of hotkey
-  //  }
-  //}
-
-  void setSliderValue(float target) {
-    sliderValue = target;
-  }
-
-  // not sure what to use the keyboard shortct for. kinda pointless here
-  //I changed it around, so the curser can drift out of the slider
-  void activateClick() { //instead of toggling, we move the slider
-
-    if (!parent.mousePressed && super.hover()) {
-      readyForClick = true;
-    } else if (!parent.mousePressed) {
-      readyForClick = false;
+    // Constructor without position
+    Slider(PApplet parent, String name, char shortcut, int min, int max, float defaultValue) {
+        super(parent, name, shortcut);
+        //sliderValue = 0.5;
+        //sliderMin = 0;
+        //sliderMax = 1;
+        sliderValue = defaultValue;
+        sliderMin = min;
+        sliderMax = max;
+        active = false;
     }
 
-    if (parent.mousePressed &&  readyForClick) {
-      active= true;
-      if (parent.mouseX > buttonX && parent.mouseX < buttonX+buttonWidth) {
-        if ((parent.mouseY < buttonY) || (parent.mouseY > buttonY + buttonHeight)) {
-          parent.fill(0);
-        } else {
-          parent.fill(255);
+    void display(int a, int b, int c, int d) {
+
+        super.display(a, b, c, d);
+        parent.noStroke();
+        sliderPosition = int(super.buttonWidth * ((sliderValue - sliderMin)/(sliderMax - sliderMin))) + super.buttonX;
+        displayIndicator();
+        parent.text(nf(sliderValue, 0, 1), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
+        //parent.text(sliderValue, super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
+    }
+
+    void displayIndicator() {
+        parent.fill(indicatorColor);
+        parent.rect(sliderPosition, super.buttonY, 3, super.buttonHeight);
+    }
+
+    //create the slider
+    //void display(int x, int y, int w, int h) {
+    //  buttonX = x;
+    //  buttonY = y;
+    //  buttonWidth = w;
+    //  buttonHeight = h;
+    //  sliderPosition = int(buttonWidth*sliderValue)+buttonX;
+
+    //  fill(state? boxActive:boxInactive); //color of rectangle
+    //  rect(buttonX, buttonY, buttonWidth, buttonHeight);
+    //  stroke(255, 0, 0);
+    //  fill(indicatorColor);
+    //  rect(sliderPosition-2, buttonY, 4, buttonHeight);
+
+    //  if (this.checkMouse) {
+    //    this.activateClick();
+    //  }
+    //  if (this.checkKey) {
+    //    this.activateKey();
+    //  }
+    //  if (displayName) {
+    //    fill(state? textActive:textInactive); //color of name
+    //    text(buttonName, buttonX+nameOffsetX, buttonY+nameOffsetY+buttonHeight);
+    //    // fill(state? highGreen:highRed);  //color of hotkey
+    //  }
+    //}
+
+    void setSliderValue(float target) {
+        sliderValue = target;
+    }
+
+    // not sure what to use the keyboard shortct for. kinda pointless here
+    //I changed it around, so the curser can drift out of the slider
+    void activateClick() { //instead of toggling, we move the slider
+
+        if (!parent.mousePressed && super.hover()) {
+            readyForClick = true;
+        } else if (!parent.mousePressed) {
+            readyForClick = false;
         }
 
-        sliderPosition = parent.mouseX;
-        // parent.text(str(this.getSliderValue()), parent.mouseX + 10, parent.mouseY + 10);
-        // parent.text(str(this.getSliderValue()), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
-        sliderValue = this.getSliderValue();
-      }
-      parent.fill(255);
+        if (parent.mousePressed &&  readyForClick) {
+            active= true;
+            if (parent.mouseX > buttonX && parent.mouseX < buttonX+buttonWidth) {
+                if ((parent.mouseY < buttonY) || (parent.mouseY > buttonY + buttonHeight)) {
+                    parent.fill(0);
+                } else {
+                    parent.fill(255);
+                }
 
-      clicked = true;
-    } else {
-      active = false;
+                sliderPosition = parent.mouseX;
+                // parent.text(str(this.getSliderValue()), parent.mouseX + 10, parent.mouseY + 10);
+                // parent.text(str(this.getSliderValue()), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
+                sliderValue = this.getSliderValue();
+            }
+            parent.fill(255);
+
+            clicked = true;
+        } else {
+            active = false;
+        }
     }
-  }
 
-  boolean sliderActive() {
-    return active;
-  }
+    boolean sliderActive() {
+        return active;
+    }
 
-  float getSliderValue() { // Here we ask what its value is
-    sliderValue = map(sliderPosition, super.buttonX, super.buttonX + super.buttonWidth, sliderMin, sliderMax);
-    return sliderValue;
-  }
+    float getSliderValue() { // Here we ask what its value is
+        sliderValue = map(sliderPosition, super.buttonX, super.buttonX + super.buttonWidth, sliderMin, sliderMax);
+        return float(nf(sliderValue, 0, 1));
+        //return round(sliderValue * 1000) / 1000;
+        //return sliderValue - sliderValue % 0.1;
+        //return sliderValue;
+    }
 
-  void indicatorColorFill(int a, int b, int c) {
-    indicatorColor = color(a, b, c);
-  }
+    void indicatorColorFill(int a, int b, int c) {
+        indicatorColor = color(a, b, c);
+    }
 
-  void indicatorColorFill(int a, int b, int c, int d) {
-    indicatorColor = color(a, b, c, d);
-  }
+    void indicatorColorFill(int a, int b, int c, int d) {
+        indicatorColor = color(a, b, c, d);
+    }
 }

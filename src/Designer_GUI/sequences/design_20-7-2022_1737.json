@@ -9,13 +9,13 @@
     "grains": "0"
   },
   {
-    "phase": "4.0",
+    "phase": "4",
     "amplitude": "0.5",
-    "cv": "0",
+    "cv": "1",
     "frecuency": "200",
     "material_id": "1",
     "waveform": "0",
-    "grains": "0"
+    "grains": "10"
   },
   {
     "phase": "4",
@@ -90,12 +90,12 @@
     "grains": "90"
   },
   {
-    "phase": "4",
+    "phase": "4.0",
     "amplitude": "0.5",
     "cv": "1",
     "frecuency": "200",
     "material_id": "10",
     "waveform": "0",
-    "grains": "100"
+    "grains": "6"
   }
 ]

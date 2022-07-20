@@ -43,8 +43,12 @@ String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5", "M6", "M7"
 String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
 int[][] sceneSwitcherPositions = new int[11][4];
 int[][] materialSelectorPositions = new int[11][4];
-int[] materialGranularity = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+//int[] materialGranularity = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+int[] materialGranularity = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 int numVerticalButtons = 10;
+String selectedDesign = "";
+boolean fileReaded = false;
+boolean justLoaded = false;
 
 // Colors
 color[] materialColors = {
@@ -237,44 +241,32 @@ void draw() {
         blueSlider.clearSlider();
     }
 
-    // Save button event
-    if (saveButton.isClicked()) {
-        saveJSONArray(materialJSON, "sequences/materials.json");
-    }
-
-    // Load button event
-    if (loadButton.isClicked()) {
-
-        String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-
-        printArray(materialPositions);
-        println(".........................");
-    }
-
     // Upload button event
-    if (uploadButton.isClicked()) {
-        //  String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-        //  printArray(materialPositions);
-        //  for (int i=0; i < materialPositions.length; i++) {
-        //    // myPort.write(byte(int(materialPositions[i])));
-        //    myPort.write(materialPositions[i]);
-        //  }
-        //  println("SEND IT!");
+    //if (uploadButton.isClicked()) {
+    //    //  String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+    //    //  printArray(materialPositions);
+    //    //  for (int i=0; i < materialPositions.length; i++) {
+    //    //    // myPort.write(byte(int(materialPositions[i])));
+    //    //    myPort.write(materialPositions[i]);
+    //    //  }
+    //    //  println("SEND IT!");
 
-        // Upload grain positions
-        myPort.write("POSITIONS");
-        myPort.write(";");
-        for (int i=0; i<yellowGrains.grainsPositions.size(); i++) {
-            myPort.write(yellowGrains.grainsPositions.get(i).toString());
-            myPort.write("-");
-        }
-        myPort.write(";");
-    }
+    //    // Upload grain positions
+    //    myPort.write("POSITIONS");
+    //    myPort.write(";");
+    //    for (int i=0; i<yellowGrains.grainsPositions.size(); i++) {
+    //        myPort.write(yellowGrains.grainsPositions.get(i).toString());
+    //        myPort.write("-");
+    //    }
+    //    myPort.write(";");
+    //}
 
     // Update grains
     yellowGrains.updateGrains();
     redGrains.updateGrains();
     blueGrains.updateGrains();
+
+    //println(yellowGrains.vibrationMode);
 
     //println(yellowGrains.grainsPositions);
     //println(yellowGrains.grainsMaterials);
@@ -290,6 +282,15 @@ void frame2Start(int index, String name) {
 
 void mouseReleased()
 {
+    // Save button event
+    if (saveButton.isClicked()) {
+        String filename = "design_" + String.valueOf(day()) + "-" + String.valueOf(month())
+            + "-" + String.valueOf(year()) + "_" + String.valueOf(hour())
+            + String.valueOf(minute());
+        println(filename);
+        saveJSONArray(materialJSON, "sequences/" + filename + ".json");
+    }
+
     // Upload button event
     if (uploadButton.isClicked()) {
 
@@ -326,4 +327,46 @@ void mouseReleased()
         println("SEND IT!");
         // myPort.clear();
     }
+
+    // Load button event
+    if (loadButton.isClicked()) {
+
+        // Select file from the file explorer
+        selectInput("Select a file to process:", "fileSelected", dataFile( "*.json" ));
+
+        while(fileReaded == false){
+            println("No seleccionado aun");
+        }
+
+        // Cargar el JSON
+        JSONArray materialsLoad = loadJSONArray(selectedDesign);
+        for (int i = 0; i < materialsLoad.size(); i++) {
+
+            JSONObject matLoad = materialsLoad.getJSONObject(i);
+
+            materials.materialFrecuencies[i] = int(matLoad.getString("frecuency"));
+            materials.materialAmplitudes[i] = float(matLoad.getString("amplitude"));
+            materials.materialPhases[i] = float(matLoad.getString("phase"));
+            materials.materialWaves[i] = int(matLoad.getString("waveform"));
+            materials.materialGranularity[i] = int(matLoad.getString("grains"));
+            materials.cvFlag[i] = int(matLoad.getString("cv"));
+        }
+        
+        justLoaded = true;
+
+        //String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+
+        //printArray(materialPositions);
+        //println(".........................");
+    }
+}
+
+void fileSelected(File selection) {
+    if (selection == null) {
+        selectedDesign = "";
+    } else {
+        selectedDesign = selection.getAbsolutePath();
+    }
+    fileReaded = true;
+    println(selectedDesign);
 }

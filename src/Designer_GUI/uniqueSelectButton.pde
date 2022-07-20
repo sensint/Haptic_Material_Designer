@@ -37,7 +37,7 @@ public class uniqueSelectButtons {
             //for the button that is toggled, we need to chack what color it stores
             //then we make that color be our currently active one
             if (uniqueButtons[i].isToggled()) {
-                parent.strokeWeight(1);
+                parent.strokeWeight(2);
                 parent.stroke(255);
                 parent.fill(colorList[i]);
                 buttonActive = true;

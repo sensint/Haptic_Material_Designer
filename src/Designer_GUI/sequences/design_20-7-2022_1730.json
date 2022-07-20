@@ -1,9 +1,9 @@
 [
   {
-    "phase": "4",
+    "phase": "4.0",
     "amplitude": "0.5",
     "cv": "1",
-    "frecuency": "200",
+    "frecuency": "341",
     "material_id": "0",
     "waveform": "0",
     "grains": "0"
@@ -11,20 +11,20 @@
   {
     "phase": "4.0",
     "amplitude": "0.5",
-    "cv": "0",
-    "frecuency": "200",
+    "cv": "1",
+    "frecuency": "384",
     "material_id": "1",
     "waveform": "0",
-    "grains": "0"
+    "grains": "1"
   },
   {
-    "phase": "4",
+    "phase": "4.0",
     "amplitude": "0.5",
     "cv": "1",
-    "frecuency": "200",
+    "frecuency": "388",
     "material_id": "2",
     "waveform": "0",
-    "grains": "20"
+    "grains": "2"
   },
   {
     "phase": "4",

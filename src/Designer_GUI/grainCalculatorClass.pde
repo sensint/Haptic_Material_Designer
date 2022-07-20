@@ -11,6 +11,7 @@ public class GrainCalculator {
     float scalarForOutput;
     int[] granularity;
     int[] granularityPointer;
+    int [] vibrationMode;
     color[] displayColor;
     String name; // <----- update and use for debug
 
@@ -29,6 +30,7 @@ public class GrainCalculator {
     GrainCalculator(PApplet parent, String newName, PhysicalSlider s, MaterialCollection m, float targetRange) {
         this.parent = parent;
         this.granularity = m.materialGranularity;
+        this.vibrationMode = m.cvFlag;
         this.binNumber = s.state.length;
         this.segmentSize = s.buttonHeight;
         this.granularityPointer = s.state;
@@ -65,19 +67,56 @@ public class GrainCalculator {
         grainsPositions.clear();
         grainsMaterials.clear();
 
+
+        //printArray(vibrationMode);
+        //println("FIN DE ARRAY MODE");
+        //printArray(granularity);
+        //println("FIN DE ARRAY GRAINS");
+
         for (int i = 0; i < binNumber; i++) { //loop through the array
 
-            //thisis just what happens at the end of the array. the logic starts after this check
-            if (i == granularityPointer.length - 1) { //if its one before the last line 
+            //this is just what happens at the end of the array. the logic starts after this check
+            if (i == granularityPointer.length - 1) { //if its one before the last line
+
                 //  println("*************Last chance******************");
                 lineIndexEnd = i + 1; //then the end of the section is the end of the index
 
                 if (granularityPointer[i] >= 0) { //if its not -1 (-1 is the default value)
-                    //the nextline is where all the assignements happen
-                    globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
+
+                    if (vibrationMode[granularityPointer[i]] == 1) {
+                        println("ES MOTION COUPLED");
+                        //the nextline is where all the assignements happen       
+                        globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
+                        //here
+                    } else if (vibrationMode[granularityPointer[i]] == 0) {
+                        println("ES CV");
+
+                        PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
+                        PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
+
+                        println(p1);
+                        println(p2);
+
+                        float freq = 10; // frequency
+                        float amp = 10; // amplitude in pixels
+                        float d = PVector.dist(p1, p2);
+                        float a = atan2(p2.y-p1.y, p2.x-p1.x);
+                        parent.stroke(255);
+                        parent.noFill();
+                        parent.pushMatrix();
+                        parent.translate(p1.x, p1.y);
+                        parent.rotate(a);
+                        parent.beginShape();
+                        for (float k = 0; k <= d; k += 1) {
+                            parent.vertex(k, sin(k*TWO_PI*freq/d)*amp);
+                        }
+                        parent.endShape();
+                        parent.popMatrix();
+                    }
+                    println("FIN PRINLN -------------------");
                 } 
 
-                //Unlessnothing is selected, the loop starts here
+                //Unless nothing is selected, the loop starts here
             } else if (granularityPointer[i + 1] != granularityPointer[i]) { //if there is a new region
                 //   println("difference found");
                 lineIndexEnd = i + 1;  //we set an end to our line (so between lineIndexStart and lineIndex end we have something to work with.
@@ -86,15 +125,44 @@ public class GrainCalculator {
 
                 //draw the grains per line:
                 if (granularityPointer[i] >= 0) {
-                    //the nextline is where all the assignements happen
-                    globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
+
+                    if (vibrationMode[granularityPointer[i]] == 1) {
+                        println("ES MOTION COUPLED");
+                        //the nextline is where all the assignements happen
+                        globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
+                        //HERE
+                    } else if (vibrationMode[granularityPointer[i]] == 0) {
+                        println("ES CV");
+                        PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
+                        PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
+
+                        println(p1);
+                        println(p2);
+
+                        float freq = 10; // frequency
+                        float amp = 10; // amplitude in pixels
+                        float d = PVector.dist(p1, p2);
+                        float a = atan2(p2.y-p1.y, p2.x-p1.x);
+                        parent.stroke(255);
+                        parent.noFill();
+                        parent.pushMatrix();
+                        parent.translate(p1.x, p1.y);
+                        parent.rotate(a);
+                        parent.beginShape();
+                        for (float k = 0; k <= d; k += 1) {
+                            parent.vertex(k, sin(k*TWO_PI*freq/d)*amp);
+                        }
+                        parent.endShape();
+                        parent.popMatrix();
+                    }
+                    println("FIN PRINLN2 --------------------");
                 }
-                // thinkabout what happens here
+                // think about what happens here
                 lineIndexStart = lineIndexEnd;
 
                 //end previous line, start new line
             }
-        }
+        } // end of for loop
 
         // println("[INFO] End ARRAY");
         parent.stroke(0);
@@ -102,9 +170,10 @@ public class GrainCalculator {
 
     //when anew segment is identified this function updates all the grains
     int drawGrains(int i, int grainID) {
+
         // println("*************drawing "+ this.name+ "******************");
         //revertthe logic. the slider should store the index to the grain, not the other way around
-        float grainSpacing = int(segmentSize * (float(binNumber) / float(this.granularity[this.granularityPointer[i]]))); //pixels between grains
+        float grainSpacing = int(segmentSize * (float(binNumber) / float(this.granularity[this.granularityPointer[i]] * 10))); //pixels between grains
         //ifthere are 20 segments, and there are 20 grains over the entire range, then there is 1 segment per grain
         //then the distance between grains is the segmentsize.
         // println("Last grainSpacing "+ grainSpacing);
@@ -166,7 +235,6 @@ public class GrainCalculator {
         parent.line(grainX - (grainWidth / 2) + 3, graynY + 3, grainX + (grainWidth / 2) - 3, graynY + 3);
         parent.line(grainX - (grainWidth / 2) + 4, graynY + 4, grainX + (grainWidth / 2) - 4, graynY + 4);
         parent.line(grainX - (grainWidth / 2) + 6, graynY + 5, grainX + (grainWidth / 2) - 6, graynY + 5);
-
         parent.ellipse(grainX, graynY, grainHeight, grainHeight);
         parent.stroke(255);
 

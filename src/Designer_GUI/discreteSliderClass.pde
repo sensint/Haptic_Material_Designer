@@ -7,6 +7,7 @@ public class DiscreteSlider extends Button {
     String name;
     color indicatorColor = color(255, 255, 255);
     boolean ticks = true;
+    String unit;
 
     DiscreteSlider(PApplet parent, String name, char shortcut, int positionX, int wi) { //its built the same way, just we add a min and max value
         super(parent, name, shortcut);
@@ -18,7 +19,7 @@ public class DiscreteSlider extends Button {
     }
 
     //constructor without position
-    DiscreteSlider(PApplet parent, String name, char shortcut, int min, int max, int value, int stepnumber, int wi) {
+    DiscreteSlider(PApplet parent, String name, char shortcut, int min, int max, int value, int stepnumber, int wi, String mes) {
         super(parent, name, shortcut);
         sliderValue = value;
         sliderMin = min;
@@ -26,11 +27,12 @@ public class DiscreteSlider extends Button {
         steps = stepnumber;
         //sliderPosition = int(map(value, sliderMin, sliderMax, sliderMin, sliderMax));
         sliderPosition = value * (wi / (steps));
-        print("sliderPosition: ");
-        println(sliderPosition);
+        //print("sliderPosition: ");
+        //println(sliderPosition);
         //println(name + " - SLIDER POSITION 1: " + str(sliderPosition));
         //println(name + " - STEPH WITH: " + str((wi / (steps))));
         this.name = name;
+        this.unit = mes;
     }
 
     void setSliderValue(int value) {
@@ -50,11 +52,12 @@ public class DiscreteSlider extends Button {
         // display indicator
         parent.fill(indicatorColor);
         parent.rect(this.indicatorPos(), super.buttonY, 3, super.buttonHeight);
-        print("indicatorpos: ");
-        println(this.indicatorPos());
+        //print("indicatorpos: ");
+        //println(this.indicatorPos());
 
         // display text
         parent.text(str(this.getSliderValue()), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2));
+        parent.text(unit, super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight - 6));
 
         // draw lines
         if (ticks == true) {

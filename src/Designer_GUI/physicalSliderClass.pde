@@ -1,4 +1,4 @@
-public class PhysicalSlider { //<>//
+public class PhysicalSlider { //<>// //<>// //<>//
 
     //this is the representation of the physical slider, which we will "color"
     PApplet parent;
@@ -71,7 +71,7 @@ public class PhysicalSlider { //<>//
     void assignColor(color newColor) {
 
         parent.stroke(#3B4653);
-        for (int i = 0; i < buttonArray.length; i++) { //<>// //<>//
+        for (int i = 0; i < buttonArray.length; i++) { //<>// //<>// //<>// //<>//
 
             if (buttonArray[i].isToggled()) {
 

@@ -16,9 +16,10 @@ public class Slider extends Button {
     int sliderMax;
     boolean active;
     color indicatorColor = color(255, 255, 255);
+    String unit;
 
     // Constructor without position
-    Slider(PApplet parent, String name, char shortcut, int min, int max, float defaultValue) {
+    Slider(PApplet parent, String name, char shortcut, int min, int max, float defaultValue, String mes) {
         super(parent, name, shortcut);
         //sliderValue = 0.5;
         //sliderMin = 0;
@@ -27,6 +28,7 @@ public class Slider extends Button {
         sliderMin = min;
         sliderMax = max;
         active = false;
+        unit = mes;
     }
 
     void display(int a, int b, int c, int d) {
@@ -35,8 +37,9 @@ public class Slider extends Button {
         parent.noStroke();
         sliderPosition = int(super.buttonWidth * ((sliderValue - sliderMin)/(sliderMax - sliderMin))) + super.buttonX;
         displayIndicator();
-        parent.text(nf(sliderValue, 0, 1), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
+        parent.text(nf(sliderValue, 0, 1), super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2));
         //parent.text(sliderValue, super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight/2 + 6));
+        parent.text(unit, super.buttonX + super.buttonWidth + 10, super.buttonY + (super.buttonHeight - 6));
     }
 
     void displayIndicator() {

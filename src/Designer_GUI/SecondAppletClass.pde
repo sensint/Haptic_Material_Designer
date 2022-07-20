@@ -32,12 +32,12 @@ class SecondApplet extends PApplet {
         print("Se inicia el slider con grains: ");
         println(materials.materialGranularity[materialIndex] / 10);
 
-        amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex]);
-        phaseSlider= new Slider(this, "Phase", 'r', minDuration, maxDuration, materials.materialPhases[materialIndex]);
+        amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
+        phaseSlider= new Slider(this, "Phase", 'r', minDuration, maxDuration, materials.materialPhases[materialIndex], "");
         //phaseSlider = new DiscreteSlider(this, "Phase", 'r', minDuration, maxDuration, materials.materialPhases[materialIndex], maxDuration - minDuration, 500);
-        frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500);
+        frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
         frecuencySlider.showTicks(false);
-        grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex] / 10, maxBin - minBin, 360);
+        grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex], maxBin - minBin, 360, "grains");
 
         saveButton = new Button(this, "Save", 's');
         resetButton = new Button(this, "Reset", 'r');
@@ -124,6 +124,8 @@ class SecondApplet extends PApplet {
             int grainsValue = 0;
             int waveformValue = waveSelector.activeButton();
             int cvValue = cvSelector.activeButton();
+            println(cvValue);
+            println("---");
             if (cvSelector.activeButton() == 0) {
                 grainsValue = 0;
             } else if (cvSelector.activeButton() == 1) {
@@ -149,19 +151,25 @@ class SecondApplet extends PApplet {
             materials.materialPhases[materialIndex] = phaseValue;
             materials.materialWaves[materialIndex] = waveformValue;
             materials.cvFlag[materialIndex] = cvValue;
-            materials.materialGranularity[materialIndex] = grainsValue * 10;
+            materials.materialGranularity[materialIndex] = grainsValue;
             // if (cvSelector.activeButton() == 0) {
             //     materials.materialGranularity[materialIndex] =  0;
             // } else if (cvSelector.activeButton() == 1) {
             //     materials.materialGranularity[materialIndex] =  round(grainSlider.getSliderValue() * 10);
             // }
 
-            print("Se guarda el slider con grains: ");
-            println(grainsValue);
+            //print("Se guarda el slider con grains: ");
+            //println(grainsValue);
 
             yellowGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
             redGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
             blueGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
+
+            yellowGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
+            //println( yellowGrains.vibrationMode[materialIndex]);
+            //println("aaaaaaaaaaaaaaaa");
+            redGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
+            blueGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
 
             this.text("Parameters saved.", 20, height-5);
         }
@@ -171,7 +179,7 @@ class SecondApplet extends PApplet {
             frecuencySlider.setSliderValue(defaultFrecuency);
             amplitudeSlider.setSliderValue(defaultAmplitude);
             phaseSlider.setSliderValue(defaultDuration);
-            grainSlider.setSliderValue(materials.materialGranularity[materialIndex] / 10);
+            grainSlider.setSliderValue(materials.materialGranularity[materialIndex]);
             waveSelector.setValue(defaultWave);
 
             this.text("Parameters reseted.", 20, height-5);

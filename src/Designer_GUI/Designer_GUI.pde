@@ -411,42 +411,47 @@ void sendAddMaterialList() {
     //myPort.write(msgStart);
     //myPort.write(msgEnd);
 
-    // send start string
-    myPort.write(msgStart);
-    myPort.write(",");
+    //// send start string
+    //myPort.write(msgStart);
+    //myPort.write(",");
 
-    // send destinarion: this function is for broadcasting
-    myPort.write(msgDestBroadcast);
-    myPort.write(",");
+    //// send destinarion: this function is for broadcasting
+    //myPort.write(msgDestBroadcast);
+    //myPort.write(",");
 
-    // send msg type
-    myPort.write(msgAddMaterialList);
-    myPort.write(",");
+    //// send msg type
+    //myPort.write(msgAddMaterialList);
+    //myPort.write(",");
 
-    // send length
-    myPort.write(str(materialSelectorNames.length));
-    myPort.write(",");
+    //// send length
+    //myPort.write(str(materialSelectorNames.length));
+    //myPort.write(",");
 
-    // send payload: material list
-    for (int i = 0; i < materialSelectorNames.length; i++) {
-        myPort.write(str(i));
-        myPort.write(",");
-        myPort.write(str(materials.cvFlag[i]));
-        myPort.write(",");
-        myPort.write(str(materials.materialGranularity[i]));
-        myPort.write(",");
-        myPort.write(str(materials.materialFrecuencies[i]));
-        myPort.write(",");
-        myPort.write(str(materials.materialAmplitudes[i]));
-        myPort.write(",");
-        myPort.write(str(materials.materialPhases[i]));
-        myPort.write(",");
-        myPort.write(str(materials.materialWaves[i]));
-        myPort.write(",");
-    }
+    //// send payload: material list
+    //for (int i = 0; i < materialSelectorNames.length; i++) {
+    //    myPort.write(str(i));
+    //    myPort.write(",");
+    //    myPort.write(str(materials.cvFlag[i]));
+    //    myPort.write(",");
+    //    myPort.write(str(materials.materialGranularity[i]));
+    //    myPort.write(",");
+    //    myPort.write(str(materials.materialFrecuencies[i]));
+    //    myPort.write(",");
+    //    myPort.write(str(materials.materialAmplitudes[i]));
+    //    myPort.write(",");
+    //    myPort.write(str(materials.materialPhases[i]));
+    //    myPort.write(",");
+    //    myPort.write(str(materials.materialWaves[i]));
+    //    myPort.write(",");
+    //}
 
-    // send end string
-    myPort.write(msgEnd);
+    //// send end string
+    //myPort.write(msgEnd);
+    //myPort.write(",");
+
+    // --------------------
+
+    myPort.write(str(materials.materialFrecuencies[0]));
     myPort.write(",");
 
     println("[INFO] END SENDING LIST OF MATERIALS");

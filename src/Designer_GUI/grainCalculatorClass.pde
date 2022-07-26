@@ -94,8 +94,8 @@ public class GrainCalculator {
                         PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
                         PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
 
-                        println(p1);
-                        println(p2);
+                        //println(p1);
+                        //println(p2);
 
                         float freq = 10; // frequency
                         float amp = 10; // amplitude in pixels
@@ -127,17 +127,17 @@ public class GrainCalculator {
                 if (granularityPointer[i] >= 0) {
 
                     if (vibrationMode[granularityPointer[i]] == 1) {
-                        println("ES MOTION COUPLED");
+                        //println("ES MOTION COUPLED");
                         //the nextline is where all the assignements happen
                         globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
                         //HERE
                     } else if (vibrationMode[granularityPointer[i]] == 0) {
-                        println("ES CV");
+                        //println("ES CV");
                         PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
                         PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
 
-                        println(p1);
-                        println(p2);
+                        //println(p1);
+                        //println(p2);
 
                         float freq = 10; // frequency
                         float amp = 10; // amplitude in pixels
@@ -155,7 +155,7 @@ public class GrainCalculator {
                         parent.endShape();
                         parent.popMatrix();
                     }
-                    println("FIN PRINLN2 --------------------");
+                    //println("FIN PRINLN2 --------------------");
                 }
                 // think about what happens here
                 lineIndexStart = lineIndexEnd;

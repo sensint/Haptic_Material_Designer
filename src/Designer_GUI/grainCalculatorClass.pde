@@ -84,12 +84,12 @@ public class GrainCalculator {
                 if (granularityPointer[i] >= 0) { //if its not -1 (-1 is the default value)
 
                     if (vibrationMode[granularityPointer[i]] == 1) {
-                        println("ES MOTION COUPLED");
+                        //println("ES MOTION COUPLED");
                         //the nextline is where all the assignements happen       
                         globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
                         //here
                     } else if (vibrationMode[granularityPointer[i]] == 0) {
-                        println("ES CV");
+                        //println("ES CV");
 
                         PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
                         PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
@@ -113,7 +113,7 @@ public class GrainCalculator {
                         parent.endShape();
                         parent.popMatrix();
                     }
-                    println("FIN PRINLN -------------------");
+                    //println("FIN PRINLN -------------------");
                 } 
 
                 //Unless nothing is selected, the loop starts here

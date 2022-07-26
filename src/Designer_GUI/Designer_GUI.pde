@@ -1,7 +1,31 @@
 import processing.serial.*;
+
 JSONObject data; // Data
 JSONArray materialJSON;
 Serial myPort;
+
+// Delimiters
+String msgStart = "<";
+String msgEnd = ">";
+
+// Message types
+String msgAddMaterial = "48";
+String msgUpdateMaterial = "49";
+String msgDeleteMaterial = "50";
+
+String msgAddMaterialList = "51";
+String msgUpdateMaterialList = "52";
+String msgDeleteMaterialList = "53";
+
+String msgAddGrainSequence = "54";
+String msgUpdateGrainSequence = "55";
+String msgDeleteGrainSequence = "56";
+
+String msgAddGrainSequenceList = "57";
+String msgUpdateGrainSequenceList = "58";
+String msgDeleteGrainSequenceList = "59";
+
+int msgDestBroadcast = 0;
 
 // For material parameters's screen
 boolean frame2Exit;
@@ -48,7 +72,6 @@ int[] materialGranularity = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 int numVerticalButtons = 10;
 String selectedDesign = "";
 boolean fileReaded = false;
-boolean justLoaded = false;
 
 // Colors
 color[] materialColors = {
@@ -110,10 +133,10 @@ void setup() {
 
     surface.setTitle("Tactile Symbol Designer");
     textSize(15);
-    //println("Ports");
-    //printArray(Serial.list());
+    println("Ports");
+    printArray(Serial.list());
     myPort = new Serial(this, Serial.list()[0], 115200);
-    //print(Serial.list()[0]);
+    print(Serial.list()[0]);
 
     data = new JSONObject();
     materialJSON = new JSONArray();
@@ -207,18 +230,22 @@ void draw() {
 
         yellowSlider.assignValue(toggleMaterial);
         yellowSlider.assignColor(materialColors[toggleMaterial]); //don't do this
+
         redSlider.assignValue(toggleMaterial);
         redSlider.assignColor(materialColors[toggleMaterial]); //don't do this
+
         blueSlider.assignValue(toggleMaterial);
         blueSlider.assignColor(materialColors[toggleMaterial]); //don't do this
     } else {
 
         yellowSlider.assignColor(yellowSlider.defaultColor);
         yellowSlider.assignValue(toggleMaterial); //no value assigned
+
         redSlider.assignColor(yellowSlider.defaultColor);
         redSlider.assignValue(toggleMaterial); //no value assigned
-        redSlider.assignColor(yellowSlider.defaultColor);
-        redSlider.assignValue(toggleMaterial); //no value assigned
+
+        blueSlider.assignColor(yellowSlider.defaultColor);
+        blueSlider.assignValue(toggleMaterial); //no value assigned
     }
 
     // Display second window
@@ -266,6 +293,7 @@ void draw() {
     redGrains.updateGrains();
     blueGrains.updateGrains();
 
+    // println(yellowSlider.state);
     //println(yellowGrains.vibrationMode);
 
     //println(yellowGrains.grainsPositions);
@@ -284,48 +312,55 @@ void mouseReleased()
 {
     // Save button event
     if (saveButton.isClicked()) {
+
+        data.setJSONArray("materials", materialJSON);
         String filename = "design_" + String.valueOf(day()) + "-" + String.valueOf(month())
             + "-" + String.valueOf(year()) + "_" + String.valueOf(hour())
             + String.valueOf(minute());
         println(filename);
-        saveJSONArray(materialJSON, "sequences/" + filename + ".json");
+        //saveJSONArray(materialJSON, "sequences/" + filename + ".json");
+        saveJSONObject(data, "sequences/" + filename + ".json");
     }
 
     // Upload button event
     if (uploadButton.isClicked()) {
 
-        // Send slider name
-        myPort.write("YELLOW");
-        myPort.write(";");
+        // // Send slider name
+        // myPort.write("YELLOW");
+        // myPort.write(";");
 
-        // Send material properties
-        myPort.write("MATERIALS");
-        myPort.write(";");
-
-
-        // Send grain positions
-        String [] grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
-        myPort.write("POSITIONS");
-        myPort.write(";");
-        for (int i=0; i<yellowGrains.grainsPositions.size(); i++) {
-            myPort.write(yellowGrains.grainsPositions.get(i).toString());
-            myPort.write("-");
-            myPort.write(grainMaterials[i]);
-            myPort.write("-");
-        }
-        myPort.write(";");
+        // // Send material properties
+        // myPort.write("MATERIALS");
+        // myPort.write(";");
 
 
-        String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-        // printArray(materialPositions);
-        for (int i=0; i < materialPositions.length; i++) {
-            // myPort.write(byte(int(materialPositions[i])));
-            myPort.write(materialPositions[i]);
-            myPort.write(",");
-            println(materialPositions[i]);
-        }
-        println("SEND IT!");
-        // myPort.clear();
+        // // Send grain positions
+        // String [] grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
+        // myPort.write("POSITIONS");
+        // myPort.write(";");
+        // for (int i=0; i<yellowGrains.grainsPositions.size(); i++) {
+        //     myPort.write(yellowGrains.grainsPositions.get(i).toString());
+        //     myPort.write("-");
+        //     myPort.write(grainMaterials[i]);
+        //     myPort.write("-");
+        // }
+        // myPort.write(";");
+
+
+        // String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+        // // printArray(materialPositions);
+        // for (int i=0; i < materialPositions.length; i++) {
+        //     // myPort.write(byte(int(materialPositions[i])));
+        //     myPort.write(materialPositions[i]);
+        //     myPort.write(",");
+        //     println(materialPositions[i]);
+        // }
+        // println("SEND IT!");
+        // // myPort.clear();
+
+        // Send materials
+        sendAddMaterialList();
+        //sendAddGrainSequenceList();
     }
 
     // Load button event
@@ -334,12 +369,15 @@ void mouseReleased()
         // Select file from the file explorer
         selectInput("Select a file to process:", "fileSelected", dataFile( "*.json" ));
 
-        while(fileReaded == false){
-            println("No seleccionado aun");
+        while (fileReaded == false) {
+            //println("No seleccionado aun");
         }
 
         // Cargar el JSON
-        JSONArray materialsLoad = loadJSONArray(selectedDesign);
+        //JSONArray materialsLoad = loadJSONArray(selectedDesign);
+        JSONObject dataLoad = loadJSONObject(selectedDesign);
+        JSONArray materialsLoad = dataLoad.getJSONArray("materials");
+
         for (int i = 0; i < materialsLoad.size(); i++) {
 
             JSONObject matLoad = materialsLoad.getJSONObject(i);
@@ -351,11 +389,8 @@ void mouseReleased()
             materials.materialGranularity[i] = int(matLoad.getString("grains"));
             materials.cvFlag[i] = int(matLoad.getString("cv"));
         }
-        
-        justLoaded = true;
 
         //String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-
         //printArray(materialPositions);
         //println(".........................");
     }
@@ -368,5 +403,58 @@ void fileSelected(File selection) {
         selectedDesign = selection.getAbsolutePath();
     }
     fileReaded = true;
-    println(selectedDesign);
+    // println(selectedDesign);
+}
+
+void sendAddMaterialList() {
+    println("[INFO] START SENDING LIST OF MATERIALS");
+    //myPort.write(msgStart);
+    //myPort.write(msgEnd);
+
+    // send start string
+    myPort.write(msgStart);
+    myPort.write(",");
+
+    // send destinarion: this function is for broadcasting
+    myPort.write(msgDestBroadcast);
+    myPort.write(",");
+
+    // send msg type
+    myPort.write(msgAddMaterialList);
+    myPort.write(",");
+
+    // send length
+    myPort.write(str(materialSelectorNames.length));
+    myPort.write(",");
+
+    // send payload: material list
+    for (int i = 0; i < materialSelectorNames.length; i++) {
+        myPort.write(str(i));
+        myPort.write(",");
+        myPort.write(str(materials.cvFlag[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialGranularity[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialFrecuencies[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialAmplitudes[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialPhases[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialWaves[i]));
+        myPort.write(",");
+    }
+
+    // send end string
+    myPort.write(msgEnd);
+    myPort.write(",");
+
+    println("[INFO] END SENDING LIST OF MATERIALS");
+}
+
+void sendAddGrainSequenceList() {
+    println("[INFO] START SENDING LIST OF SEQUENCE");
+    //myPort.write("<");
+    //myPort.write(">");
+    println("[INFO] END SENDING LIST OF SEQUENCE");
 }

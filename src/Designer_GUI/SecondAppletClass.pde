@@ -29,8 +29,8 @@ class SecondApplet extends PApplet {
         textSize(15);
         surface.setTitle("Custom material " + materialName);
 
-        print("Se inicia el slider con grains: ");
-        println(materials.materialGranularity[materialIndex] / 10);
+        //print("Se inicia el slider con grains: ");
+        //println(materials.materialGranularity[materialIndex] / 10);
 
         amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
         phaseSlider= new Slider(this, "Phase", 'r', minDuration, maxDuration, materials.materialPhases[materialIndex], "");

@@ -47,7 +47,7 @@ public class MaterialCollection {
     int[] materialFrecuencies;
     int[] materialWaves;
     float[] materialAmplitudes;
-    float[] materialPhases;
+    float[] materialDurations;
 
     //constructor without position
     MaterialCollection() {
@@ -60,7 +60,7 @@ public class MaterialCollection {
         materialFrecuencies = new int[11];
         materialWaves = new int[11];
         materialAmplitudes = new float[11];
-        materialPhases = new float[11];
+        materialDurations = new float[11];
 
         for (int i = 0; i < assigned.length; i++) {
             assigned[i] = false;
@@ -94,7 +94,7 @@ public class MaterialCollection {
             materialFrecuencies[index] = newFrecuency;
             materialWaves[index] = newWave;
             materialAmplitudes[index] = newAmplitude;
-            materialPhases[index] = newDuration;
+            materialDurations[index] = newDuration;
         } else { 
             println("[ERROR] material trying to write to an invalid materialCollection slot");
         }

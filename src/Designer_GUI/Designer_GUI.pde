@@ -42,7 +42,7 @@ color whiteColor = textColor;
 
 // Default values
 int defaultFrecuency = 200;
-int minFrecuency = 10;
+int minFrecuency = 20;
 int maxFrecuency = 400;
 float defaultAmplitude = 0.5;
 int minAmplitude = 0;
@@ -148,7 +148,7 @@ void setup() {
         currentMaterial.setString("material_id", str(i));
         currentMaterial.setString("frecuency", str(defaultFrecuency));
         currentMaterial.setString("amplitude", str(defaultAmplitude));
-        currentMaterial.setString("phase", str(defaultDuration));
+        currentMaterial.setString("duration", str(defaultDuration));
         currentMaterial.setString("grains", str(materialGranularity[i]));
         currentMaterial.setString("waveform", str(defaultWave));
         currentMaterial.setString("cv", str(defaultMode));
@@ -190,15 +190,12 @@ void setup() {
     }
 
     yellowSlider = new PhysicalSlider(this, numVerticalButtons, color(241, 89, 110, 50));
-    // yellowSlider.defaultColor(color(241, 89, 110, 100));
     yellowSlider.drawSlider(200, 25, 90, 700); 
 
     redSlider = new PhysicalSlider(this, numVerticalButtons, color(255, 209, 102, 50));
-    // redSlider.defaultColor(color(255, 209, 102, 100));
     redSlider.drawSlider(400, 25, 90, 700);
 
     blueSlider = new PhysicalSlider(this, numVerticalButtons, color(15, 157, 174, 50));
-    // blueSlider.defaultColor(color(15, 157, 174, 100));
     blueSlider.drawSlider(600, 25, 90, 700);
 
     saveButton = new Button(this, "Save");
@@ -275,26 +272,6 @@ void draw() {
         blueSlider.clearSlider();
     }
 
-    // Upload button event
-    //if (uploadButton.isClicked()) {
-    //    //  String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-    //    //  printArray(materialPositions);
-    //    //  for (int i=0; i < materialPositions.length; i++) {
-    //    //    // myPort.write(byte(int(materialPositions[i])));
-    //    //    myPort.write(materialPositions[i]);
-    //    //  }
-    //    //  println("SEND IT!");
-
-    //    // Upload grain positions
-    //    myPort.write("POSITIONS");
-    //    myPort.write(";");
-    //    for (int i=0; i<yellowGrains.grainsPositions.size(); i++) {
-    //        myPort.write(yellowGrains.grainsPositions.get(i).toString());
-    //        myPort.write("-");
-    //    }
-    //    myPort.write(";");
-    //}
-
     // Update grains
     yellowGrains.updateGrains();
     redGrains.updateGrains();
@@ -326,92 +303,53 @@ void mouseReleased()
             println("No filename yet");
         }
 
-        data.setJSONArray("materials", materialJSON);
-
-        //String filename = "design_" + String.valueOf(day()) + "-" + String.valueOf(month())
-        //+ "-" + String.valueOf(year()) + "_" + String.valueOf(hour())
-        //    + String.valueOf(minute());
-        // println(filename);
-        //saveJSONArray(materialJSON, "sequences/" + filename + ".json");
-        // saveJSONObject(data, "sequences/" + filename + ".json");
-
-        filenameJSON = filenameJSON.replace("\\", "/");
-        println(filenameJSON);
-
-        saveJSONObject(data, filenameJSON);
+        if (filenameJSON != "") {
+            data.setJSONArray("materials", materialJSON);
+            filenameJSON = filenameJSON.replace("\\", "/");
+            println(filenameJSON);
+            saveJSONObject(data, filenameJSON);
+        }
     }
 
     // Upload button event
     if (uploadButton.isClicked()) {
 
-        // // Send slider name
-        // myPort.write("YELLOW");
-        // myPort.write(";");
+        sendAddMaterialList();
 
-        // // Send material properties
-        // myPort.write("MATERIALS");
-        // myPort.write(";");
-
-
-        // // Send grain positions
-        // String [] grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
-        // myPort.write("POSITIONS");
-        // myPort.write(";");
-        // for (int i=0; i<yellowGrains.grainsPositions.size(); i++) {
-        //     myPort.write(yellowGrains.grainsPositions.get(i).toString());
-        //     myPort.write("-");
-        //     myPort.write(grainMaterials[i]);
-        //     myPort.write("-");
-        // }
-        // myPort.write(";");
-
-
-        // String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-        // // printArray(materialPositions);
-        // for (int i=0; i < materialPositions.length; i++) {
-        //     // myPort.write(byte(int(materialPositions[i])));
-        //     myPort.write(materialPositions[i]);
-        //     myPort.write(",");
-        //     println(materialPositions[i]);
-        // }
-        // println("SEND IT!");
-        // // myPort.clear();
-
-        // Send materials
-        // sendAddMaterialList();
-        //sendAddGrainSequenceList();
+        sendAddGrainSequence(0, "red");
+        sendAddGrainSequence(1, "yellow");
+        sendAddGrainSequence(2, "blue");
     }
 
     // Load button event
     if (loadButton.isClicked()) {
 
-        // Select file from the file explorer
         selectInput("Select a file to process:", "fileSelected", dataFile( "*.json" ));
 
         while (fileReaded == false) {
-            //println("No seleccionado aun");
+            println("No selected yet");
         }
 
-        // Cargar el JSON
-        //JSONArray materialsLoad = loadJSONArray(selectedDesign);
-        JSONObject dataLoad = loadJSONObject(selectedDesign);
-        JSONArray materialsLoad = dataLoad.getJSONArray("materials");
+        if (selectedDesign != "") {
 
-        for (int i = 0; i < materialsLoad.size(); i++) {
+            JSONObject dataLoad = loadJSONObject(selectedDesign);
+            JSONArray materialsLoad = dataLoad.getJSONArray("materials");
 
-            JSONObject matLoad = materialsLoad.getJSONObject(i);
+            for (int i = 0; i < materialsLoad.size(); i++) {
 
-            materials.materialFrecuencies[i] = int(matLoad.getString("frecuency"));
-            materials.materialAmplitudes[i] = float(matLoad.getString("amplitude"));
-            materials.materialPhases[i] = float(matLoad.getString("phase"));
-            materials.materialWaves[i] = int(matLoad.getString("waveform"));
-            materials.materialGranularity[i] = int(matLoad.getString("grains"));
-            materials.cvFlag[i] = int(matLoad.getString("cv"));
+                JSONObject matLoad = materialsLoad.getJSONObject(i);
+                materials.materialFrecuencies[i] = int(matLoad.getString("frecuency"));
+                materials.materialAmplitudes[i] = float(matLoad.getString("amplitude"));
+                materials.materialDurations[i] = float(matLoad.getString("duration"));
+                materials.materialWaves[i] = int(matLoad.getString("waveform"));
+                materials.materialGranularity[i] = int(matLoad.getString("grains"));
+                materials.cvFlag[i] = int(matLoad.getString("cv"));
+            }
+
+            //String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
+            //printArray(materialPositions);
+            //println(".........................");
         }
-
-        //String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-        //printArray(materialPositions);
-        //println(".........................");
     }
 }
 
@@ -422,7 +360,6 @@ void fileSelected(File selection) {
         selectedDesign = selection.getAbsolutePath();
     }
     fileReaded = true;
-    // println(selectedDesign);
 }
 
 void fileSelectedJSON(File selection) {
@@ -442,54 +379,94 @@ void sendAddMaterialList() {
     //myPort.write(msgEnd);
 
     //// send start string
-    //myPort.write(msgStart);
-    //myPort.write(",");
+    myPort.write(msgStart);
+    myPort.write(",");
 
     //// send destinarion: this function is for broadcasting
-    //myPort.write(msgDestBroadcast);
-    //myPort.write(",");
+    myPort.write(msgDestBroadcast);
+    myPort.write(",");
 
     //// send msg type
-    //myPort.write(msgAddMaterialList);
-    //myPort.write(",");
+    myPort.write(msgUpdateMaterialList);
+    myPort.write(",");
 
     //// send length
-    //myPort.write(str(materialSelectorNames.length));
-    //myPort.write(",");
+    myPort.write(str(materialSelectorNames.length));
+    myPort.write(",");
 
     //// send payload: material list
-    //for (int i = 0; i < materialSelectorNames.length; i++) {
-    //    myPort.write(str(i));
-    //    myPort.write(",");
-    //    myPort.write(str(materials.cvFlag[i]));
-    //    myPort.write(",");
-    //    myPort.write(str(materials.materialGranularity[i]));
-    //    myPort.write(",");
-    //    myPort.write(str(materials.materialFrecuencies[i]));
-    //    myPort.write(",");
-    //    myPort.write(str(materials.materialAmplitudes[i]));
-    //    myPort.write(",");
-    //    myPort.write(str(materials.materialPhases[i]));
-    //    myPort.write(",");
-    //    myPort.write(str(materials.materialWaves[i]));
-    //    myPort.write(",");
-    //}
+    for (int i = 0; i < materialSelectorNames.length; i++) {
+        myPort.write(str(i));
+        myPort.write(",");
+        myPort.write(str(materials.cvFlag[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialGranularity[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialFrecuencies[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialAmplitudes[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialDurations[i]));
+        myPort.write(",");
+        myPort.write(str(materials.materialWaves[i]));
+        myPort.write(",");
+    }
 
     //// send end string
-    //myPort.write(msgEnd);
-    //myPort.write(",");
-
-    // --------------------
-
-    myPort.write(str(materials.materialFrecuencies[0]));
+    myPort.write(msgEnd);
     myPort.write(",");
 
     println("[INFO] END SENDING LIST OF MATERIALS");
 }
 
-void sendAddGrainSequenceList() {
+void sendAddGrainSequence(int destination, String slider) {
+
+    String [] grainMaterials = {};
+
     println("[INFO] START SENDING LIST OF SEQUENCE");
-    //myPort.write("<");
-    //myPort.write(">");
+    // send start string
+    myPort.write(msgStart);
+    myPort.write(",");
+
+    // send destinarion
+    myPort.write(destination);
+    myPort.write(",");
+
+    //// send msg type
+    myPort.write(msgUpdateGrainSequence);
+    myPort.write(",");
+
+    switch(slider) {
+    case "yellow":
+        grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
+        break;
+    case "red":
+        grainMaterials = fromColorToMaterial(redGrains.grainsMaterials, materialColors);
+        break;
+    case "blue":
+        grainMaterials = fromColorToMaterial(blueGrains.grainsMaterials, materialColors);
+        break;
+    default:
+        break;
+    }
+
+    //// send length
+    myPort.write(str(yellowGrains.grainsPositions.size()));
+    myPort.write(",");
+
+    // send data
+    for (int i=0; i<yellowGrains.grainsPositions.size(); i++) {
+        myPort.write(grainMaterials[i]);
+        myPort.write(",");
+        myPort.write(yellowGrains.grainsPositions.get(i).toString());
+        myPort.write(",");
+        myPort.write(yellowGrains.grainsPositions.get(i).toString());
+        myPort.write(",");
+    }
+
+    //// send end string
+    myPort.write(msgEnd);
+    myPort.write(",");
+
     println("[INFO] END SENDING LIST OF SEQUENCE");
 }

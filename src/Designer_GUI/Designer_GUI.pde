@@ -221,11 +221,7 @@ void draw() {
 
   background(mainColor);
 
-  // Display buttons
-  saveButton.display(20, 770, 100, 35);  
-  loadButton.display(140, 770, 100, 35);
-  clearButton.display(260, 770, 100, 35);
-  uploadButton.display(380, 770, 100, 35);
+
 
   // Display material and parameter window selector
   materialSelector.display(materialSelectorPositions);
@@ -282,6 +278,13 @@ void draw() {
   //printArray(fromColorToMaterial(yellowGrains.grainsMaterials, materialColors));
   //println(".....");
   // println(yellowGrains.grainsPositions.size());
+
+  // Display buttons
+  fill(whiteColor);
+  saveButton.display(20, 770, 100, 35);  
+  loadButton.display(140, 770, 100, 35);
+  clearButton.display(260, 770, 100, 35);
+  uploadButton.display(380, 770, 100, 35);
 }
 
 void frame2Start(int index, String name) {
@@ -418,6 +421,46 @@ void sendAddMaterialList() {
   myPort.write(msgEnd);
   myPort.write(",");
 
+  // PRINTING SECTION -----------------------
+  // send start string
+  print(msgStart);
+  print(",");
+
+  // send destinarion: this function is for broadcasting
+  print(msgDestBroadcast);
+  print(",");
+
+  // send msg type
+  print(msgUpdateMaterialList);
+  print(",");
+
+  // send length
+  print(str(materialSelectorNames.length));
+  print(",");
+
+  // send payload: material list
+  for (int i = 0; i < materialSelectorNames.length; i++) {
+    print(str(i));
+    print(",");
+    print(str(materials.cvFlag[i]));
+    print(",");
+    print(str(materials.materialGranularity[i]));
+    print(",");
+    print(str(materials.materialFrecuencies[i]));
+    print(",");
+    print(str(materials.materialAmplitudes[i]));
+    print(",");
+    print(str(materials.materialDurations[i]));
+    print(",");
+    print(str(materials.materialWaves[i]));
+    print(",");
+  }
+
+  // send end string
+  print(msgEnd);
+  println(",");
+  // ----------------------------------------
+
   println("[INFO] END SENDING LIST OF MATERIALS");
 }
 
@@ -473,6 +516,39 @@ void sendAddGrainSequence(int destination, String slider) {
   // send end string
   myPort.write(msgEnd);
   myPort.write(",");
+
+  // PRINTING SECCION -------------------------------------
+  // send start string
+  print(msgStart);
+  print(",");
+
+  // send destinarion
+  print(destination);
+  print(",");
+
+  // send msg type
+  print(msgUpdateGrainSequence);
+  print(",");
+
+  // send length
+  print(str(generalGrainsPositions.size()));
+  print(",");
+
+  // send data
+  for (int i=0; i<generalGrainsPositions.size(); i++) {
+    print(grainMaterials[i]);
+    print(",");
+    print(generalGrainsPositions.get(i).toString());
+    print(",");
+    print(generalGrainsPositions.get(i).toString());
+    print(",");
+  }
+
+  // send end string
+  print(msgEnd);
+  println(",");
+
+  // -----------------------------------------------
 
   println("[INFO] END SENDING LIST OF SEQUENCE");
 }

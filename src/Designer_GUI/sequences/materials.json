@@ -1,0 +1,101 @@
+[
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "0",
+    "waveform": "0",
+    "grains": "0"
+  },
+  {
+    "phase": "4.0",
+    "amplitude": "0.5",
+    "cv": "0",
+    "frecuency": "200",
+    "material_id": "1",
+    "waveform": "0",
+    "grains": "0"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "2",
+    "waveform": "0",
+    "grains": "20"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "3",
+    "waveform": "0",
+    "grains": "30"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "4",
+    "waveform": "0",
+    "grains": "40"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "5",
+    "waveform": "0",
+    "grains": "50"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "6",
+    "waveform": "0",
+    "grains": "60"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "7",
+    "waveform": "0",
+    "grains": "70"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "8",
+    "waveform": "0",
+    "grains": "80"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "9",
+    "waveform": "0",
+    "grains": "90"
+  },
+  {
+    "phase": "4",
+    "amplitude": "0.5",
+    "cv": "1",
+    "frecuency": "200",
+    "material_id": "10",
+    "waveform": "0",
+    "grains": "100"
+  }
+]

@@ -147,7 +147,7 @@ public class GrainCalculator {
         parent.line(xPosition, lineIndexStart * segmentSize + yPosition, xPosition, lineIndexEnd * segmentSize + yPosition); //draw that line
 
         if (vibrationMode[granularityPointer[i]] == 1) {
-            // println("It is MOTION COUPLED");
+            println("It is MOTION COUPLED");
 
             //the nextline is where all the assignements happen
             for (int y = 0; y < grainNumber; y++) {
@@ -183,7 +183,7 @@ public class GrainCalculator {
                 }
             }
         } else if (vibrationMode[granularityPointer[i]] == 0) {
-            //println("It is CV");
+            println("It is CV");
             PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
             PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
 
@@ -191,8 +191,6 @@ public class GrainCalculator {
             //println(p2);
             drawWave(p1, p2);
         }
-
-
 
         return grainID;
     }

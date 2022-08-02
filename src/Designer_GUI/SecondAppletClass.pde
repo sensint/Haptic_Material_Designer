@@ -9,7 +9,7 @@ class SecondApplet extends PApplet {
     Slider amplitudeSlider, phaseSlider;
     DiscreteSlider frecuencySlider, grainSlider;
 
-    String[] waveSelectorName = {"Sine", "Square", "Triangle", "Sawtooth"};
+    String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Triangle"};
     String[] cvSelectorName = {"Continuous", "Motion coupled"};
     int[][] cvSelectorPositions = new int [cvSelectorName.length][4];
     int[][] waveSelectorPositions = new int[waveSelectorName.length][4];
@@ -27,13 +27,13 @@ class SecondApplet extends PApplet {
 
     public void setup() {
         textSize(15);
-        surface.setTitle("Custom material " + materialName);
+        surface.setTitle("Customize material " + materialName);
 
         //print("Se inicia el slider con grains: ");
         //println(materials.materialGranularity[materialIndex] / 10);
 
         amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
-        phaseSlider= new Slider(this, "Phase", 'r', minDuration, maxDuration, materials.materialPhases[materialIndex], "");
+        phaseSlider= new Slider(this, "Duration", 'r', minDuration, maxDuration, materials.materialPhases[materialIndex], "ms");
         //phaseSlider = new DiscreteSlider(this, "Phase", 'r', minDuration, maxDuration, materials.materialPhases[materialIndex], maxDuration - minDuration, 500);
         frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
         frecuencySlider.showTicks(false);
@@ -89,7 +89,7 @@ class SecondApplet extends PApplet {
         }
 
         this.fill(whiteColor);
-        this.text("Custom vibration parameters", 15, 170);
+        this.text("Parameters of vibration", 15, 170);
 
         // Display sliders
         this.fill(secondaryColor); 

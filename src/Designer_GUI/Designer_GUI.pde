@@ -42,8 +42,8 @@ color whiteColor = textColor;
 
 // Default values
 int defaultFrecuency = 200;
-int minFrecuency = 0;
-int maxFrecuency = 500;
+int minFrecuency = 10;
+int maxFrecuency = 400;
 float defaultAmplitude = 0.5;
 int minAmplitude = 0;
 int maxAmplitude = 1;
@@ -71,7 +71,9 @@ int[][] materialSelectorPositions = new int[11][4];
 int[] materialGranularity = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 int numVerticalButtons = 10;
 String selectedDesign = "";
+String filenameJSON = "";
 boolean fileReaded = false;
+boolean fileTyped = false;
 
 // Colors
 color[] materialColors = {
@@ -190,18 +192,18 @@ void setup() {
     yellowSlider = new PhysicalSlider(this, numVerticalButtons, color(241, 89, 110, 50));
     // yellowSlider.defaultColor(color(241, 89, 110, 100));
     yellowSlider.drawSlider(200, 25, 90, 700); 
-    
+
     redSlider = new PhysicalSlider(this, numVerticalButtons, color(255, 209, 102, 50));
     // redSlider.defaultColor(color(255, 209, 102, 100));
     redSlider.drawSlider(400, 25, 90, 700);
-    
+
     blueSlider = new PhysicalSlider(this, numVerticalButtons, color(15, 157, 174, 50));
     // blueSlider.defaultColor(color(15, 157, 174, 100));
     blueSlider.drawSlider(600, 25, 90, 700);
 
     saveButton = new Button(this, "Save");
     loadButton = new Button(this, "Load");
-    clearButton = new Button(this, "Clear");
+    clearButton = new Button(this, "Clear all");
     uploadButton = new Button(this, "Upload");
 
     materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length, materialSelectorNames, materialColors);
@@ -318,13 +320,25 @@ void mouseReleased()
     // Save button event
     if (saveButton.isClicked()) {
 
+        selectOutput("Select a file to write to:", "fileSelectedJSON", dataFile( ".json" ));
+
+        while (fileTyped == false) {
+            println("No filename yet");
+        }
+
         data.setJSONArray("materials", materialJSON);
-        String filename = "design_" + String.valueOf(day()) + "-" + String.valueOf(month())
-            + "-" + String.valueOf(year()) + "_" + String.valueOf(hour())
-            + String.valueOf(minute());
-        println(filename);
+
+        //String filename = "design_" + String.valueOf(day()) + "-" + String.valueOf(month())
+        //+ "-" + String.valueOf(year()) + "_" + String.valueOf(hour())
+        //    + String.valueOf(minute());
+        // println(filename);
         //saveJSONArray(materialJSON, "sequences/" + filename + ".json");
-        saveJSONObject(data, "sequences/" + filename + ".json");
+        // saveJSONObject(data, "sequences/" + filename + ".json");
+
+        filenameJSON = filenameJSON.replace("\\", "/");
+        println(filenameJSON);
+
+        saveJSONObject(data, filenameJSON);
     }
 
     // Upload button event
@@ -364,7 +378,7 @@ void mouseReleased()
         // // myPort.clear();
 
         // Send materials
-        sendAddMaterialList();
+        // sendAddMaterialList();
         //sendAddGrainSequenceList();
     }
 
@@ -409,6 +423,17 @@ void fileSelected(File selection) {
     }
     fileReaded = true;
     // println(selectedDesign);
+}
+
+void fileSelectedJSON(File selection) {
+    if (selection == null) {
+        //println("Window was closed or the user hit cancel.");
+        filenameJSON = "";
+    } else {
+        filenameJSON = selection.getAbsolutePath();
+        //println("User selected " + filenameJSON);
+    }
+    fileTyped = true;
 }
 
 void sendAddMaterialList() {

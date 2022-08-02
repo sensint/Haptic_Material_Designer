@@ -187,11 +187,16 @@ void setup() {
         sceneSwitcherPositions[i][3] = 35;
     }
 
-    yellowSlider = new PhysicalSlider(this, numVerticalButtons);
+    yellowSlider = new PhysicalSlider(this, numVerticalButtons, color(241, 89, 110, 50));
+    // yellowSlider.defaultColor(color(241, 89, 110, 100));
     yellowSlider.drawSlider(200, 25, 90, 700); 
-    redSlider = new PhysicalSlider(this, numVerticalButtons);
+    
+    redSlider = new PhysicalSlider(this, numVerticalButtons, color(255, 209, 102, 50));
+    // redSlider.defaultColor(color(255, 209, 102, 100));
     redSlider.drawSlider(400, 25, 90, 700);
-    blueSlider = new PhysicalSlider(this, numVerticalButtons);
+    
+    blueSlider = new PhysicalSlider(this, numVerticalButtons, color(15, 157, 174, 50));
+    // blueSlider.defaultColor(color(15, 157, 174, 100));
     blueSlider.drawSlider(600, 25, 90, 700);
 
     saveButton = new Button(this, "Save");
@@ -241,10 +246,10 @@ void draw() {
         yellowSlider.assignColor(yellowSlider.defaultColor);
         yellowSlider.assignValue(toggleMaterial); //no value assigned
 
-        redSlider.assignColor(yellowSlider.defaultColor);
+        redSlider.assignColor(redSlider.defaultColor);
         redSlider.assignValue(toggleMaterial); //no value assigned
 
-        blueSlider.assignColor(yellowSlider.defaultColor);
+        blueSlider.assignColor(blueSlider.defaultColor);
         blueSlider.assignValue(toggleMaterial); //no value assigned
     }
 

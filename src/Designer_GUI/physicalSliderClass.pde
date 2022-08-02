@@ -8,18 +8,20 @@ public class PhysicalSlider { //<>// //<>//
     float buttonHeight;
     int sliderHeight;
     color[] toggleColor;
-    color defaultColor = mainColor;
+    color defaultColor;
     int xPosition;
     int yPosition;
     int sliderWidth;
+    color dividerColor = #0a1420; 
 
-    PhysicalSlider(PApplet parent, int numberOfButtons) {
+    PhysicalSlider(PApplet parent, int numberOfButtons, color mainColor) {
         this.parent = parent;
         multiButtonCount = numberOfButtons;
         buttonArray = new multiButton[numberOfButtons];  // create the buttons for chosing colors
         state = new int[numberOfButtons]; // create an array for updating the status of the slider
         toggleColor = new color[numberOfButtons];
-
+        this.defaultColor = mainColor;
+ 
         for (int i = 0; i < buttonArray.length; i++) {
             buttonArray[i] = new multiButton(parent, "");
             state[i] = -1;
@@ -48,13 +50,15 @@ public class PhysicalSlider { //<>// //<>//
     void clearSlider() {
         for (int i = 0; i < state.length; i++) {
             state[i]= -1;
+            // toggleColor[i] = color(255, 209, 102, 128);
             toggleColor[i] = defaultColor;
         }
     }
 
     void assignValue(int newValue) {
 
-        parent.stroke(#3B4653);
+        parent.strokeWeight(2);
+        parent.stroke(dividerColor);
         for (int i =0; i < buttonArray.length; i++) {
 
             if (buttonArray[i].isToggled()) {
@@ -70,7 +74,8 @@ public class PhysicalSlider { //<>// //<>//
 
     void assignColor(color newColor) {
 
-        parent.stroke(#3B4653);
+        parent.strokeWeight(2);
+        parent.stroke(dividerColor);
         for (int i = 0; i < buttonArray.length; i++) { //<>// //<>// //<>//
 
             if (buttonArray[i].isToggled()) {

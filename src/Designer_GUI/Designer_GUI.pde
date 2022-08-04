@@ -136,7 +136,7 @@ String[] fromColorToMaterial(ArrayList<Integer> rawColors, color[] materialColor
 }
 
 void settings() {
-  size(int(displayWidth * 0.4), int(displayHeight * 0.78));
+  size(int(displayWidth * 0.4), int(displayHeight * 0.7));
 }
 
 void setup() {
@@ -199,13 +199,13 @@ void setup() {
   }
 
   redSlider = new PhysicalSlider(this, numVerticalButtons, color(241, 89, 110, 50));
-  redSlider.drawSlider(200, 25, 90, 700);
+  redSlider.drawSlider(400, 25, 90, 700);
 
   yellowSlider = new PhysicalSlider(this, numVerticalButtons, color(255, 209, 102, 50));
-  yellowSlider.drawSlider(400, 25, 90, 700); 
+  yellowSlider.drawSlider(600, 25, 90, 700); 
 
   blueSlider = new PhysicalSlider(this, numVerticalButtons, color(15, 157, 174, 50));
-  blueSlider.drawSlider(600, 25, 90, 700);
+  blueSlider.drawSlider(200, 25, 90, 700);
 
   saveButton = new Button(this, "Save");
   loadButton = new Button(this, "Load");
@@ -264,9 +264,9 @@ void draw() {
   }
 
   // Display physical sliders
-  redSlider.drawSlider(200, 25, 90, 700);
-  yellowSlider.drawSlider(400, 25, 90, 700);
-  blueSlider.drawSlider(600, 25, 90, 700);
+  redSlider.drawSlider(400, 25, 90, 700);
+  yellowSlider.drawSlider(600, 25, 90, 700);
+  blueSlider.drawSlider(200, 25, 90, 700);
 
   // Update grains
   yellowGrains.updateGrains();
@@ -358,9 +358,9 @@ void mouseReleased()
   if (uploadButton.isClicked()) {
 
     sendAddMaterialList();
-    sendAddGrainSequence(0, "red");
-    sendAddGrainSequence(1, "yellow");
-    sendAddGrainSequence(2, "blue");
+    sendAddGrainSequence(0, "blue");
+    sendAddGrainSequence(1, "red");
+    sendAddGrainSequence(2, "yellow");
   }
 
   // Load button event
@@ -539,7 +539,8 @@ void sendAddMaterialList() {
 void sendAddGrainSequence(int destination, String slider) {
 
   String [] grainMaterials = {};
-  ArrayList<Float> generalGrainsPositions = new ArrayList<Float>();
+  ArrayList<Float> generalGrainsPositionsStart = new ArrayList<Float>();
+  ArrayList<Float> generalGrainsPositionsEnd = new ArrayList<Float>();
 
   println("[INFO] START SENDING LIST OF SEQUENCE");
   // send start string
@@ -556,33 +557,36 @@ void sendAddGrainSequence(int destination, String slider) {
   switch(slider) {
   case "yellow":
     grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
-    generalGrainsPositions = yellowGrains.grainsPositions;
+    generalGrainsPositionsStart = yellowGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = yellowGrains.grainsPositionsEnd;
     break;
   case "red":
     grainMaterials = fromColorToMaterial(redGrains.grainsMaterials, materialColors);
-    generalGrainsPositions = redGrains.grainsPositions;
+    generalGrainsPositionsStart = redGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = redGrains.grainsPositionsEnd;
     break;
   case "blue":
     grainMaterials = fromColorToMaterial(blueGrains.grainsMaterials, materialColors);
-    generalGrainsPositions = blueGrains.grainsPositions;
+    generalGrainsPositionsStart = blueGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = blueGrains.grainsPositionsEnd;
     break;
   default:
     break;
   }
 
   // send length
-  myPort.write(str(generalGrainsPositions.size()));
+  myPort.write(str(generalGrainsPositionsStart.size()));
   myPort.write(",");
 
   // send data
-  for (int i=0; i<generalGrainsPositions.size(); i++) {
+  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
     myPort.write(grainMaterials[i]);
     myPort.write(",");
-    myPort.write(generalGrainsPositions.get(i).toString());
+    myPort.write(generalGrainsPositionsStart.get(i).toString());
     myPort.write(",");
-    myPort.write(generalGrainsPositions.get(i).toString());
+    myPort.write(generalGrainsPositionsEnd.get(i).toString());
 
-    if (i != generalGrainsPositions.size() - 1) {
+    if (i != generalGrainsPositionsStart.size() - 1) {
       myPort.write(",");
     }
   }
@@ -603,18 +607,18 @@ void sendAddGrainSequence(int destination, String slider) {
   print(",");
 
   // send length
-  print(str(generalGrainsPositions.size()));
+  print(str(generalGrainsPositionsStart.size()));
   print(",");
 
   // send data
-  for (int i=0; i<generalGrainsPositions.size(); i++) {
+  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
     print(grainMaterials[i]);
     print(",");
-    print(generalGrainsPositions.get(i).toString());
+    print(generalGrainsPositionsStart.get(i).toString());
     print(",");
-    print(generalGrainsPositions.get(i).toString());
+    print(generalGrainsPositionsEnd.get(i).toString());
 
-    if (i != generalGrainsPositions.size() - 1) {
+    if (i != generalGrainsPositionsStart.size() - 1) {
       print(",");
     }
   }

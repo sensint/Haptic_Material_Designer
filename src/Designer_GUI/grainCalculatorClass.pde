@@ -15,7 +15,8 @@ public class GrainCalculator {
   color[] displayColor;
   String name; // <----- update and use for debug
 
-  ArrayList<Float> grainsPositions = new ArrayList<Float>();
+  ArrayList<Float> grainsPositionsStart = new ArrayList<Float>();
+  ArrayList<Float> grainsPositionsEnd = new ArrayList<Float>();
   ArrayList<Integer> grainsMaterials = new ArrayList<Integer>();
   int[] grainsGlobalIds;
   //int[] grainsMaterials;
@@ -51,9 +52,9 @@ public class GrainCalculator {
 
     // println("[INFO] Begin ARRAY " + this.name);
 
-    grainsPositions.clear();
+    grainsPositionsStart.clear();
+    grainsPositionsEnd.clear();
     grainsMaterials.clear();
-
 
     //printArray(vibrationMode);
     //println("FIN DE ARRAY MODE");
@@ -144,10 +145,11 @@ public class GrainCalculator {
     //lineIndexEnd and lineIndexStart are the INDEXES of where lines start. They need to be multiplied by segment size for dimensionality
     //  println("Last grainNumber "+ grainSpacing);
     parent.stroke(255);
-    parent.line(xPosition, lineIndexStart * segmentSize + yPosition, xPosition, lineIndexEnd * segmentSize + yPosition); //draw that line
 
     if (vibrationMode[granularityPointer[i]] == 1) {
-      // println("It is MOTION COUPLED");
+      
+      parent.line(xPosition, lineIndexStart * segmentSize + yPosition, xPosition, lineIndexEnd * segmentSize + yPosition); //draw that line
+      println("It is MOTION COUPLED");
 
       //the nextline is where all the assignements happen
       for (int y = 0; y < grainNumber; y++) {
@@ -169,7 +171,8 @@ public class GrainCalculator {
             //print(", " +  "\t" + " at " + grainPosition * scalarForOutput);
             //println("," +  "\t" + " \t" + " with material " + granularityPointer[i]);
 
-            grainsPositions.add(grainPosition * scalarForOutput);
+            grainsPositionsStart.add(grainPosition * scalarForOutput);
+            grainsPositionsEnd.add(grainPosition * scalarForOutput);
             grainsMaterials.add(displayColor[granularityPointer[i]]);
 
             // Save Grain Data
@@ -183,13 +186,17 @@ public class GrainCalculator {
         }
       }
     } else if (vibrationMode[granularityPointer[i]] == 0) {
-      // println("It is CV");
+      println("It is CV");
+
+      int frecMultiplier = int((lineIndexEnd - lineIndexStart));
       PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
       PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
 
-      //println(p1);
-      //println(p2);
-      drawWave(p1, p2);
+      grainsPositionsStart.add((lineIndexStart * segmentSize) * scalarForOutput);
+      grainsPositionsEnd.add((lineIndexEnd * segmentSize) * scalarForOutput);
+      grainsMaterials.add(displayColor[granularityPointer[i]]);
+
+      drawWave(p1, p2, frecMultiplier);
     }
 
     return grainID;
@@ -220,8 +227,8 @@ public class GrainCalculator {
     //  endShape();
   }
 
-  void drawWave(PVector p1, PVector p2) {
-    float freq = 10; // frequency
+  void drawWave(PVector p1, PVector p2, int frecMul) {
+    float freq = 4 * frecMul;
     float amp = 10; // amplitude in pixels
     float d = PVector.dist(p1, p2);
     float a = atan2(p2.y-p1.y, p2.x-p1.x);

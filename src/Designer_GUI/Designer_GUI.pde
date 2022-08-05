@@ -353,9 +353,9 @@ void mouseReleased()
   if (uploadButton.isClicked()) {
 
     sendAddMaterialList();
-    sendAddGrainSequence(1, "blue");
-    sendAddGrainSequence(2, "red");
-    sendAddGrainSequence(3, "yellow");
+    sendAddGrainSequence(3, "blue");
+    sendAddGrainSequence(4, "red");
+    sendAddGrainSequence(5, "yellow");
   }
 
   // Load button event
@@ -465,7 +465,7 @@ void sendAddMaterialList() {
 
   // send payload: material list
   for (int i = 0; i < materialSelectorNames.length; i++) {
-    myPort.write(str(i));
+    myPort.write(str(i+1));
     myPort.write(",");
     myPort.write(str(materials.cvFlag[i]));
     myPort.write(",");
@@ -505,7 +505,7 @@ void sendAddMaterialList() {
 
   // send payload: material list
   for (int i = 0; i < materialSelectorNames.length; i++) {
-    print(str(i));
+    print(str(i+1));
     print(",");
     print(str(materials.cvFlag[i]));
     print(",");
@@ -546,7 +546,7 @@ void sendAddGrainSequence(int destination, String slider) {
   myPort.write(",");
 
   // send msg type
-  myPort.write(msgUpdateGrainSequence);
+  myPort.write(msgAddGrainSequence);
   myPort.write(",");
 
   switch(slider) {
@@ -575,7 +575,7 @@ void sendAddGrainSequence(int destination, String slider) {
 
   // send data
   for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
-    myPort.write(grainMaterials[i]);
+    myPort.write(str(int(grainMaterials[i])+1));
     myPort.write(",");
     myPort.write(generalGrainsPositionsStart.get(i).toString());
     myPort.write(",");
@@ -598,7 +598,7 @@ void sendAddGrainSequence(int destination, String slider) {
   print(",");
 
   // send msg type
-  print(msgUpdateGrainSequence);
+  print(msgAddGrainSequence);
   print(",");
 
   // send length
@@ -607,7 +607,7 @@ void sendAddGrainSequence(int destination, String slider) {
 
   // send data
   for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
-    print(grainMaterials[i]);
+    print(str(int(grainMaterials[i])+1));
     print(",");
     print(generalGrainsPositionsStart.get(i).toString());
     print(",");

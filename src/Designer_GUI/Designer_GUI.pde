@@ -534,8 +534,8 @@ void sendAddMaterialList() {
 void sendAddGrainSequence(int destination, String slider) {
 
   String [] grainMaterials = {};
-  ArrayList<Float> generalGrainsPositionsStart = new ArrayList<Float>();
-  ArrayList<Float> generalGrainsPositionsEnd = new ArrayList<Float>();
+  ArrayList<Integer> generalGrainsPositionsStart = new ArrayList<Integer>();
+  ArrayList<Integer> generalGrainsPositionsEnd = new ArrayList<Integer>();
 
   println("[INFO] START SENDING LIST OF SEQUENCE");
   // send start string

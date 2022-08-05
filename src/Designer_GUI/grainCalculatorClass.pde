@@ -15,8 +15,8 @@ public class GrainCalculator {
   color[] displayColor;
   String name; // <----- update and use for debug
 
-  ArrayList<Float> grainsPositionsStart = new ArrayList<Float>();
-  ArrayList<Float> grainsPositionsEnd = new ArrayList<Float>();
+  ArrayList<Integer> grainsPositionsStart = new ArrayList<Integer>();
+  ArrayList<Integer> grainsPositionsEnd = new ArrayList<Integer>();
   ArrayList<Integer> grainsMaterials = new ArrayList<Integer>();
   int[] grainsGlobalIds;
   //int[] grainsMaterials;
@@ -171,9 +171,9 @@ public class GrainCalculator {
             //print(", " +  "\t" + " at " + grainPosition * scalarForOutput);
             //println("," +  "\t" + " \t" + " with material " + granularityPointer[i]);
 
-            grainsPositionsStart.add(grainPosition * scalarForOutput);
-            grainsPositionsEnd.add(grainPosition * scalarForOutput);
-            grainsMaterials.add(displayColor[granularityPointer[i]]);
+            grainsPositionsStart.add(int(grainPosition * scalarForOutput));
+            grainsPositionsEnd.add(int(grainPosition * scalarForOutput));
+            grainsMaterials.add(int(displayColor[granularityPointer[i]]));
 
             // Save Grain Data
 

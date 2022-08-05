@@ -353,9 +353,9 @@ void mouseReleased()
   if (uploadButton.isClicked()) {
 
     sendAddMaterialList();
-    sendAddGrainSequence(0, "blue");
-    sendAddGrainSequence(1, "red");
-    sendAddGrainSequence(2, "yellow");
+    sendAddGrainSequence(1, "blue");
+    sendAddGrainSequence(2, "red");
+    sendAddGrainSequence(3, "yellow");
   }
 
   // Load button event
@@ -509,15 +509,15 @@ void sendAddMaterialList() {
     print(",");
     print(str(materials.cvFlag[i]));
     print(",");
-    print(str(materials.materialGranularity[i]));
-    print(",");
+    //print(str(materials.materialGranularity[i]));
+    //print(",");
     print(str(materials.materialWaves[i]));
     print(",");
     print(str(materials.materialFrecuencies[i]));
     print(",");
     print(str(materials.materialAmplitudes[i]));
     print(",");
-    print(str(materials.materialDurations[i]));
+    print(str(int(materials.materialDurations[i])));
 
     if (i != materialSelectorNames.length - 1) {
       print(",");

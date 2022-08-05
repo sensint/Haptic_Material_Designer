@@ -456,7 +456,7 @@ void sendAddMaterialList() {
   myPort.write(",");
 
   // send msg type
-  myPort.write(msgUpdateMaterialList);
+  myPort.write(msgAddMaterialList);
   myPort.write(",");
 
   // send length
@@ -496,7 +496,7 @@ void sendAddMaterialList() {
   print(",");
 
   // send msg type
-  print(msgUpdateMaterialList);
+  print(msgAddMaterialList);
   print(",");
 
   // send length

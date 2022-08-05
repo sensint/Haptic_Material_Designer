@@ -192,9 +192,9 @@ public class GrainCalculator {
       PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
       PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
 
-      grainsPositionsStart.add((lineIndexStart * segmentSize) * scalarForOutput);
-      grainsPositionsEnd.add((lineIndexEnd * segmentSize) * scalarForOutput);
-      grainsMaterials.add(displayColor[granularityPointer[i]]);
+      grainsPositionsStart.add(int((lineIndexStart * segmentSize) * scalarForOutput));
+      grainsPositionsEnd.add(int((lineIndexEnd * segmentSize) * scalarForOutput));
+      grainsMaterials.add(int(displayColor[granularityPointer[i]]));
 
       drawWave(p1, p2, frecMultiplier);
     }

@@ -34,6 +34,7 @@ class SecondApplet extends PApplet {
 
         amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
         durationSlider= new Slider(this, "Duration", 'r', minDuration, maxDuration, materials.materialDurations[materialIndex], "ms");
+        //frecuencySlider = new Slider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");
         frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
         frecuencySlider.showTicks(false);
         grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex], maxBin - minBin, 360, "grains");

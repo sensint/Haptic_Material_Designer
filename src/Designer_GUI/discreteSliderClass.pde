@@ -26,7 +26,7 @@ public class DiscreteSlider extends Button {
         sliderMax = max;
         steps = stepnumber;
         //sliderPosition = int(map(value, sliderMin, sliderMax, sliderMin, sliderMax));
-        sliderPosition = value * (wi / (steps));
+        sliderPosition = (value - sliderMin) * ((wi) / (steps));
         //print("sliderPosition: ");
         //println(sliderPosition);
         //println(name + " - SLIDER POSITION 1: " + str(sliderPosition));
@@ -36,7 +36,7 @@ public class DiscreteSlider extends Button {
     }
 
     void setSliderValue(int value) {
-        sliderPosition = value * (super.buttonWidth / (steps));
+        sliderPosition = (value - sliderMin) * (super.buttonWidth / (steps));
     }
 
     void showTicks(boolean value) {

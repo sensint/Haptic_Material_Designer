@@ -46,13 +46,13 @@ color textColor = #E0E1DD;
 color whiteColor = textColor;
 
 // Default values
-int defaultFrecuency = 200;
-int minFrecuency = 20;
-int maxFrecuency = 400;
-float defaultAmplitude = 0.5;
+int defaultFrecuency = 40;
+int minFrecuency = 25;
+int maxFrecuency = 275;
+float defaultAmplitude = 1.0;
 int minAmplitude = 0;
 int maxAmplitude = 1;
-int defaultDuration = 4;
+int defaultDuration = 10;
 int minDuration = 2;
 int maxDuration = 20;
 int minBin = 0;
@@ -68,13 +68,13 @@ PhysicalSlider yellowSlider, redSlider, blueSlider;
 uniqueSelectButtons materialSelector, parameterSelector;
 Button saveButton, loadButton, clearButton, uploadButton;
 
-String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"};
-String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
+String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5"};
+String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
 
-int[][] sceneSwitcherPositions = new int[11][4];
-int[][] materialSelectorPositions = new int[11][4];
+int[][] sceneSwitcherPositions = new int[materialSelectorNames.length][4];
+int[][] materialSelectorPositions = new int[materialSelectorNames.length][4];
 
-int[] materialGranularity = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+int[] materialGranularity = {0, 1, 2, 3, 4, 5};
 int numVerticalButtons = 10;
 
 // For loading and saving JSON files
@@ -85,16 +85,11 @@ boolean fileTyped = false;
 
 // Material colors
 color[] materialColors = {
-  color(248, 255, 229), 
-  color(252, 226, 145), 
+  color(248, 255, 229),
   color(255, 196, 61), 
-  color(247, 134, 86), 
   color(239, 71, 111), 
-  color(186, 92, 126), 
   color(133, 113, 141), 
-  color(27, 154, 170), 
   color(17, 184, 165), 
-  color(6, 214, 160), 
   color(5, 200, 129)
 };
 
@@ -136,7 +131,7 @@ String[] fromColorToMaterial(ArrayList<Integer> rawColors, color[] materialColor
 }
 
 void settings() {
-  size(int(displayWidth * 0.4), int(displayHeight * 0.7));
+  size(int(displayWidth * 0.4), int(displayHeight * 0.78));
 }
 
 void setup() {
@@ -350,7 +345,7 @@ void mouseReleased()
       // println(filenameJSON);
       saveJSONObject(data, filenameJSON);
     }
-    
+
     fileTyped = false;
   }
 
@@ -365,7 +360,7 @@ void mouseReleased()
 
   // Load button event
   if (loadButton.isClicked()) {
-    
+
     println("Load cliecke");
 
     selectInput("Select a file to process:", "fileSelected", dataFile( "*.json" ));
@@ -426,7 +421,7 @@ void mouseReleased()
       //println(".........................");
     }
   }
-  
+
   fileReaded = false;
 }
 

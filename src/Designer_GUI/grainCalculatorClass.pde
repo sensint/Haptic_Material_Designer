@@ -146,7 +146,7 @@ public class GrainCalculator {
     //  println("Last grainNumber "+ grainSpacing);
     parent.stroke(255);
 
-    if (vibrationMode[granularityPointer[i]] == 1) {
+    if (vibrationMode[granularityPointer[i]] == 0) {
       
       parent.line(xPosition, lineIndexStart * segmentSize + yPosition, xPosition, lineIndexEnd * segmentSize + yPosition); //draw that line
       //println("It is MOTION COUPLED");
@@ -185,7 +185,7 @@ public class GrainCalculator {
           }
         }
       }
-    } else if (vibrationMode[granularityPointer[i]] == 0) {
+    } else if (vibrationMode[granularityPointer[i]] == 1) {
       //println("It is CV");
 
       int frecMultiplier = int((lineIndexEnd - lineIndexStart));

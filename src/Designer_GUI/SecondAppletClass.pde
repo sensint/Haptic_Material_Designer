@@ -10,7 +10,7 @@ class SecondApplet extends PApplet {
     DiscreteSlider frecuencySlider, grainSlider;
 
     String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Triangle"};
-    String[] cvSelectorName = {"Continuous", "Motion coupled"};
+    String[] cvSelectorName = {"Motion coupled", "Continuous"};
     int[][] cvSelectorPositions = new int [cvSelectorName.length][4];
     int[][] waveSelectorPositions = new int[waveSelectorName.length][4];
 
@@ -78,11 +78,14 @@ class SecondApplet extends PApplet {
 
         // Display vibration selector
         cvSelector.display(cvSelectorPositions);
-        if (cvSelector.activeButton() == 1) {
+        
+        // if selector is 1 means MOTION COUPLED
+        if (cvSelector.activeButton() == 0) {
             this.fill(secondaryColor); 
             this.noStroke();
             grainSlider.display(160, 45, 360, 75);
-        } else if (cvSelector.activeButton() == 0) {
+        } else if (cvSelector.activeButton() == 1) {
+            // if selector is 0 means CONTINUOUS VIBRATION
             this.text("Continuous vibration selected, no grains!", 200, 90);
         } else if (cvSelector.activeButton() == -1) {
             this.text("Please, choose a vibration mode.", 220, 90);
@@ -126,9 +129,11 @@ class SecondApplet extends PApplet {
             int cvValue = cvSelector.activeButton();
             println(cvValue);
             println("---");
-            if (cvSelector.activeButton() == 0) {
+            if (cvSelector.activeButton() == 1) {
+                // if cvSelector is 0 means CV
                 grainsValue = 0;
-            } else if (cvSelector.activeButton() == 1) {
+            } else if (cvSelector.activeButton() == 0) {
+                // if cvSelector is 1 means MOTION COUPLED
                 grainsValue = round(grainSlider.getSliderValue());
                 //grainsValue = round(grainSlider.getSliderValue());
             }

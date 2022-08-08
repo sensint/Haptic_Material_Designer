@@ -572,7 +572,6 @@ void deleteAllGrainsSequences(String destination) {
   // send end string 
   myPort.write(msgEnd);
 
-
   // send start String
   print(msgStart);
 
@@ -639,8 +638,11 @@ void sendUpdateGrainSequence(String destination, String slider) {
 
   // send sequence ID
   myPort.write("1");
-  myPort.write(",");
 
+
+  if (generalGrainsPositionsStart.size() != 0) {
+    myPort.write(",");
+  }
 
   // send data
   for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
@@ -676,7 +678,9 @@ void sendUpdateGrainSequence(String destination, String slider) {
 
   // send ID
   print("1");
-  print(",");
+  if (generalGrainsPositionsStart.size() != 0) {
+    print(",");
+  }
 
   // send data
   for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
@@ -744,7 +748,9 @@ void sendAddGrainSequence(String destination, String slider) {
 
   // send sequence ID
   myPort.write("1");
-  myPort.write(",");
+  if (generalGrainsPositionsStart.size() != 0) {
+    myPort.write(",");
+  }
 
 
   // send data
@@ -781,7 +787,9 @@ void sendAddGrainSequence(String destination, String slider) {
 
   // send ID
   print("1");
-  print(",");
+  if (generalGrainsPositionsStart.size() != 0) {
+    print(",");
+  }
 
   // send data
   for (int i=0; i<generalGrainsPositionsStart.size(); i++) {

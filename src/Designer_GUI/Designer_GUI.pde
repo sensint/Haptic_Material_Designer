@@ -489,7 +489,7 @@ void sendAddMaterialList() {
     myPort.write(",");
     myPort.write(str(materials.materialGranularity[i]));
     myPort.write(",");
-    myPort.write(str(materials.materialWaves[i]));
+    myPort.write(str(materials.materialWaves[i]+1));
     myPort.write(",");
     myPort.write(str(materials.materialFrecuencies[i]));
     myPort.write(",");
@@ -529,7 +529,7 @@ void sendAddMaterialList() {
     print(",");
     //print(str(materials.materialGranularity[i]));
     //print(",");
-    print(str(materials.materialWaves[i]));
+    print(str(materials.materialWaves[i]+1));
     print(",");
     print(str(materials.materialFrecuencies[i]));
     print(",");

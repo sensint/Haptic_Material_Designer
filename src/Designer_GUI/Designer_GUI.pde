@@ -362,6 +362,7 @@ void mouseReleased()
   if (uploadButton.isClicked()) {
 
     sendAddMaterialList();
+
     
     // decide add or update sequences
     if(sequencesAdded == false){
@@ -654,6 +655,7 @@ void sendUpdateGrainSequence(int destination, String slider){
   // send data
   for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
     print(str(int(grainMaterials[i])+1));
+
     print(",");
     print(generalGrainsPositionsStart.get(i).toString());
     print(",");
@@ -758,6 +760,7 @@ void sendAddGrainSequence(int destination, String slider) {
   // send data
   for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
     print(str(int(grainMaterials[i])+1));
+
     print(",");
     print(generalGrainsPositionsStart.get(i).toString());
     print(",");

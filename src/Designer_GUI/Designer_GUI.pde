@@ -706,18 +706,6 @@ void sendUpdateGrainSequence(String destination, String slider) {
   ArrayList<Integer> generalGrainsPositionsStart = new ArrayList<Integer>();
   ArrayList<Integer> generalGrainsPositionsEnd = new ArrayList<Integer>();
 
-  println("[INFO] START UPDATING LIST OF SEQUENCE");
-  // send start string
-  myPort.write(msgStart);
-
-  // send destinarion
-  myPort.write(destination);
-  myPort.write(",");
-
-  // send msg type
-  myPort.write(msgUpdateGrainSequence);
-  myPort.write(",");
-
   switch(slider) {
   case "yellow":
     grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
@@ -738,76 +726,92 @@ void sendUpdateGrainSequence(String destination, String slider) {
     break;
   }
 
-  // send length
-  myPort.write(str(generalGrainsPositionsStart.size()));
-  myPort.write(",");
-
-  // send sequence ID
-  myPort.write("1");
-
-
   if (generalGrainsPositionsStart.size() != 0) {
-    myPort.write(",");
-  }
 
-  // send data
-  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
-    myPort.write(str(int(grainMaterials[i])+1));
-    myPort.write(",");
-    myPort.write(generalGrainsPositionsStart.get(i).toString());
-    myPort.write(",");
-    myPort.write(generalGrainsPositionsEnd.get(i).toString());
+    println("[INFO] START UPDATING LIST OF SEQUENCE");
+    // send start string
+    myPort.write(msgStart);
 
-    if (i != generalGrainsPositionsStart.size() - 1) {
+    // send destinarion
+    myPort.write(destination);
+    myPort.write(",");
+
+    // send msg type
+    myPort.write(msgUpdateGrainSequence);
+    myPort.write(",");
+
+    // send length
+    myPort.write(str(generalGrainsPositionsStart.size()));
+    myPort.write(",");
+
+    // send sequence ID
+    myPort.write("1");
+
+    if (generalGrainsPositionsStart.size() != 0) {
       myPort.write(",");
     }
-  }
 
-  // send end string
-  myPort.write(msgEnd);
+    // send data
+    for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
+      myPort.write(str(int(grainMaterials[i])+1));
+      myPort.write(",");
+      myPort.write(generalGrainsPositionsStart.get(i).toString());
+      myPort.write(",");
+      myPort.write(generalGrainsPositionsEnd.get(i).toString());
 
-  // PRINTING SECCION -------------------------------------
-  // send start string
-  print(msgStart);
+      if (i != generalGrainsPositionsStart.size() - 1) {
+        myPort.write(",");
+      }
+    }
 
-  // send destinarion
-  print(destination);
-  print(",");
+    // send end string
+    myPort.write(msgEnd);
 
-  // send msg type
-  print(msgUpdateGrainSequence);
-  print(",");
+    // PRINTING SECCION -------------------------------------
+    // send start string
+    print(msgStart);
 
-  // send length
-  print(str(generalGrainsPositionsStart.size()));
-  print(",");
-
-  // send ID
-  print("1");
-  if (generalGrainsPositionsStart.size() != 0) {
+    // send destinarion
+    print(destination);
     print(",");
-  }
 
-  // send data
-  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
-    print(str(int(grainMaterials[i])+1));
-
+    // send msg type
+    print(msgUpdateGrainSequence);
     print(",");
-    print(generalGrainsPositionsStart.get(i).toString());
-    print(",");
-    print(generalGrainsPositionsEnd.get(i).toString());
 
-    if (i != generalGrainsPositionsStart.size() - 1) {
+    // send length
+    print(str(generalGrainsPositionsStart.size()));
+    print(",");
+
+    // send ID
+    print("1");
+    if (generalGrainsPositionsStart.size() != 0) {
       print(",");
     }
+
+    // send data
+    for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
+      print(str(int(grainMaterials[i])+1));
+
+      print(",");
+      print(generalGrainsPositionsStart.get(i).toString());
+      print(",");
+      print(generalGrainsPositionsEnd.get(i).toString());
+
+      if (i != generalGrainsPositionsStart.size() - 1) {
+        print(",");
+      }
+    }
+
+    // send end string
+    print(msgEnd);
+
+    // -----------------------------------------------
+
+    println("[INFO] END UPDATING LIST OF SEQUENCES");
+  } else {
+    sendStopAugmentation(destination);
   }
-
-  // send end string
-  print(msgEnd);
-
-  // -----------------------------------------------
-
-  println("[INFO] END UPDATING LIST OF SEQUENCES");
 }
 
 void sendAddGrainSequence(String destination, String slider) {
@@ -816,18 +820,6 @@ void sendAddGrainSequence(String destination, String slider) {
   ArrayList<Integer> generalGrainsPositionsStart = new ArrayList<Integer>();
   ArrayList<Integer> generalGrainsPositionsEnd = new ArrayList<Integer>();
 
-  println("[INFO] START SENDING LIST OF SEQUENCE");
-  // send start string
-  myPort.write(msgStart);
-
-  // send destinarion
-  myPort.write(destination);
-  myPort.write(",");
-
-  // send msg type
-  myPort.write(msgAddGrainSequence);
-  myPort.write(",");
-
   switch(slider) {
   case "yellow":
     grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
@@ -848,73 +840,92 @@ void sendAddGrainSequence(String destination, String slider) {
     break;
   }
 
-  // send length
-  myPort.write(str(generalGrainsPositionsStart.size()));
-  myPort.write(",");
 
-  // send sequence ID
-  myPort.write("1");
   if (generalGrainsPositionsStart.size() != 0) {
+    println("[INFO] START SENDING LIST OF SEQUENCE");
+    // send start string
+    myPort.write(msgStart);
+
+    // send destinarion
+    myPort.write(destination);
     myPort.write(",");
-  }
+
+    // send msg type
+    myPort.write(msgAddGrainSequence);
+    myPort.write(",");
 
 
-  // send data
-  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
-    myPort.write(str(int(grainMaterials[i])+1));
-    myPort.write(",");
-    myPort.write(generalGrainsPositionsStart.get(i).toString());
-    myPort.write(",");
-    myPort.write(generalGrainsPositionsEnd.get(i).toString());
 
-    if (i != generalGrainsPositionsStart.size() - 1) {
+    // send length
+    myPort.write(str(generalGrainsPositionsStart.size()));
+    myPort.write(",");
+
+    // send sequence ID
+    myPort.write("1");
+    if (generalGrainsPositionsStart.size() != 0) {
       myPort.write(",");
     }
-  }
 
-  // send end string
-  myPort.write(msgEnd);
 
-  // PRINTING SECCION -------------------------------------
-  // send start string
-  print(msgStart);
+    // send data
+    for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
+      myPort.write(str(int(grainMaterials[i])+1));
+      myPort.write(",");
+      myPort.write(generalGrainsPositionsStart.get(i).toString());
+      myPort.write(",");
+      myPort.write(generalGrainsPositionsEnd.get(i).toString());
 
-  // send destinarion
-  print(destination);
-  print(",");
+      if (i != generalGrainsPositionsStart.size() - 1) {
+        myPort.write(",");
+      }
+    }
 
-  // send msg type
-  print(msgAddGrainSequence);
-  print(",");
+    // send end string
+    myPort.write(msgEnd);
 
-  // send length
-  print(str(generalGrainsPositionsStart.size()));
-  print(",");
+    // PRINTING SECCION -------------------------------------
+    // send start string
+    print(msgStart);
 
-  // send ID
-  print("1");
-  if (generalGrainsPositionsStart.size() != 0) {
+    // send destinarion
+    print(destination);
     print(",");
-  }
 
-  // send data
-  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
-    print(str(int(grainMaterials[i])+1));
-
+    // send msg type
+    print(msgAddGrainSequence);
     print(",");
-    print(generalGrainsPositionsStart.get(i).toString());
-    print(",");
-    print(generalGrainsPositionsEnd.get(i).toString());
 
-    if (i != generalGrainsPositionsStart.size() - 1) {
+    // send length
+    print(str(generalGrainsPositionsStart.size()));
+    print(",");
+
+    // send ID
+    print("1");
+    if (generalGrainsPositionsStart.size() != 0) {
       print(",");
     }
+
+    // send data
+    for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
+      print(str(int(grainMaterials[i])+1));
+
+      print(",");
+      print(generalGrainsPositionsStart.get(i).toString());
+      print(",");
+      print(generalGrainsPositionsEnd.get(i).toString());
+
+      if (i != generalGrainsPositionsStart.size() - 1) {
+        print(",");
+      }
+    }
+
+    // send end string
+    print(msgEnd);
+
+    // -----------------------------------------------
+
+    println("[INFO] END SENDING LIST OF SEQUENCE");
+  } else {
+    sendStopAugmentation(destination);
   }
-
-  // send end string
-  print(msgEnd);
-
-  // -----------------------------------------------
-
-  println("[INFO] END SENDING LIST OF SEQUENCE");
 }

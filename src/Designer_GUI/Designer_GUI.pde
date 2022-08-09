@@ -60,7 +60,7 @@ int maxAmplitude = 1;
 int defaultDuration = 10;
 int minDuration = 2;
 int maxDuration = 20;
-int minBin = 0;
+int minBin = 1;
 int maxBin = 10;
 int defaultWaveForm = 0;
 int defaultWave = 0;
@@ -79,7 +79,8 @@ String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit
 int[][] sceneSwitcherPositions = new int[materialSelectorNames.length][4];
 int[][] materialSelectorPositions = new int[materialSelectorNames.length][4];
 
-int[] materialGranularity = {0, 1, 2, 3, 4, 5};
+// int[] materialGranularity = {0, 1, 2, 3, 4, 5};
+int[] materialGranularity = {1, 2, 3, 4, 5, 6};
 int numVerticalButtons = 10;
 
 // For loading and saving JSON files

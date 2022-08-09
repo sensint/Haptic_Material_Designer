@@ -305,7 +305,6 @@ void mouseReleased()
     redSlider.clearSlider();
     blueSlider.clearSlider();
 
-    deleteAllGrainsSequences("0");
     sendStopAugmentation("0");
     sequencesAdded = false;
   }

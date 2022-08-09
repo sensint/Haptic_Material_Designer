@@ -14,6 +14,7 @@ String msgStart = "<";
 String msgEnd = ">";
 
 // Message types
+String msgStartAugmentation = "32";
 String msgStopAugmentation = "33";
 
 String msgAddMaterial = "48";
@@ -305,6 +306,7 @@ void mouseReleased()
     blueSlider.clearSlider();
 
     deleteAllGrainsSequences("0");
+    sendStopAugmentation("0");
     sequencesAdded = false;
   }
 
@@ -369,6 +371,13 @@ void mouseReleased()
       sendAddGrainSequence("3", "blue");
       sendAddGrainSequence("4", "red");
       sendAddGrainSequence("5", "yellow");
+
+      sendUpdateGrainSequence("3", "blue");
+      sendUpdateGrainSequence("4", "red");
+      sendUpdateGrainSequence("5", "yellow");
+
+      // start augmentation
+      sendStartAugmentation("0");
 
       sequencesAdded = true;
     } else {
@@ -464,6 +473,101 @@ void fileSelectedJSON(File selection) {
   }
   fileTyped = true;
 }
+
+void sendStartAugmentation(String destination) {
+  println("[INFO] START SENDING: START AUGMENTATION");
+  // send start String
+  myPort.write(msgStart);
+
+  // send destination
+  myPort.write(destination);
+  myPort.write(",");
+
+  // send msg type
+  myPort.write(msgStartAugmentation);
+  myPort.write(",");
+
+  // send length
+  myPort.write("0");
+
+  // send dash
+  myPort.write(",");
+  myPort.write("-");
+
+  // send end string 
+  myPort.write(msgEnd);
+
+  // send start String
+  print(msgStart);
+
+  // send destination
+  print(destination);
+  print(",");
+
+  // send msg type
+  print(msgStartAugmentation);
+  print(",");
+
+  // send length
+  print("0");
+
+  // send dash
+  print(",");
+  print("-");
+
+  // send end string 
+  println(msgEnd);
+
+  println("[INFO] END SENDING: START AUGMENTATION");
+}
+
+void sendStopAugmentation(String destination) {
+  println("[INFO] START SENDING: STOP AUGMENTATION");
+  // send start String
+  myPort.write(msgStart);
+
+  // send destination
+  myPort.write(destination);
+  myPort.write(",");
+
+  // send msg type
+  myPort.write(msgStopAugmentation);
+  myPort.write(",");
+
+  // send length
+  myPort.write("0");
+
+  // send dash
+  myPort.write(",");
+  myPort.write("-");
+
+  // send end string 
+  myPort.write(msgEnd);
+
+  // send start String
+  print(msgStart);
+
+  // send destination
+  print(destination);
+  print(",");
+
+  // send msg type
+  print(msgStopAugmentation);
+  print(",");
+
+  // send length
+  print("0");
+
+  // send dash
+  print(",");
+  print("-");
+
+  // send end string 
+  println(msgEnd);
+
+  println("[INFO] END SENDING: STOP AUGMENTATION");
+}
+
 
 void sendAddMaterialList() {
   println("[INFO] START SENDING LIST OF MATERIALS");

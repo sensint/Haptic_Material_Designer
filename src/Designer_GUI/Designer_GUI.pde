@@ -14,6 +14,8 @@ String msgStart = "<";
 String msgEnd = ">";
 
 // Message types
+String msgStopAugmentation = "33";
+
 String msgAddMaterial = "48";
 String msgUpdateMaterial = "49";
 String msgDeleteMaterial = "50";
@@ -559,15 +561,15 @@ void deleteAllGrainsSequences(String destination) {
   myPort.write(",");
 
   // send msg type
-  myPort.write(msgDeleteGrainSequence);
+  myPort.write(msgStopAugmentation);
   myPort.write(",");
 
   // send length
-  myPort.write("1");
+  myPort.write("0");
 
   // send dash
   myPort.write(",");
-  myPort.write("1");
+  myPort.write("-");
 
   // send end string 
   myPort.write(msgEnd);
@@ -580,15 +582,15 @@ void deleteAllGrainsSequences(String destination) {
   print(",");
 
   // send msg type
-  print(msgDeleteGrainSequence);
+  print(msgStopAugmentation);
   print(",");
 
   // send length
-  print("1");
+  print("0");
 
   // send dash
   print(",");
-  print("1");
+  print("-");
 
   // send end string 
   println(msgEnd);

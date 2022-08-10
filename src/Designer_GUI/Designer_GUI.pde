@@ -35,7 +35,7 @@ String msgDeleteGrainSequenceList = "59";
 
 String msgDeleteAllGrainSequences = "61";
 
-int msgDestBroadcast = 0;
+String msgDestBroadcast = "0";
 
 // For material parameters' screen
 boolean frame2Exit;
@@ -53,11 +53,13 @@ int defaultFrecuency = 150;
 int minFrecuency = 25;
 int maxFrecuency = 275;
 float defaultAmplitude = 1.0;
+float ghostAmplitude = 0.0;
 int minAmplitude = 0;
 int maxAmplitude = 1;
 int defaultDuration = 10;
 int minDuration = 2;
 int maxDuration = 20;
+float ghostDuration = 0.01;
 int minBin = 1;
 int maxBin = 10;
 int defaultWaveForm = 0;
@@ -71,14 +73,13 @@ PhysicalSlider yellowSlider, redSlider, blueSlider;
 uniqueSelectButtons materialSelector, parameterSelector;
 Button saveButton, loadButton, clearButton, uploadButton;
 
-String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5"};
-String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
+String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5", "MX"};
+String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
 
-int[][] sceneSwitcherPositions = new int[materialSelectorNames.length][4];
-int[][] materialSelectorPositions = new int[materialSelectorNames.length][4];
+int[][] sceneSwitcherPositions = new int[materialSelectorNames.length - 1][4];
+int[][] materialSelectorPositions = new int[materialSelectorNames.length - 1][4];
 
-// int[] materialGranularity = {0, 1, 2, 3, 4, 5};
-int[] materialGranularity = {1, 2, 3, 4, 5, 6};
+int[] materialGranularity = {1, 2, 3, 4, 5, 6, 7};
 int numVerticalButtons = 10;
 
 // For loading and saving JSON files
@@ -96,7 +97,8 @@ color[] materialColors = {
   color(239, 71, 111), 
   color(133, 113, 141), 
   color(17, 184, 165), 
-  color(5, 200, 129)
+  color(5, 200, 129),
+  color(255, 255, 100),
 };
 
 color[] uiColors = {
@@ -148,12 +150,12 @@ void setup() {
   println("Ports");
   printArray(Serial.list());
   myPort = new Serial(this, Serial.list()[0], 115200);
-  print(Serial.list()[0]);
+  println(Serial.list()[0]);
 
   data = new JSONObject();
   materialJSON = new JSONArray();
 
-  for (int i = 0; i < materialSelectorNames.length; i++) {
+  for (int i = 0; i < materialSelectorNames.length - 1; i++) {
     JSONObject currentMaterial = new JSONObject();
     currentMaterial.setString("material_id", str(i));
     currentMaterial.setString("frecuency", str(defaultFrecuency));
@@ -170,6 +172,13 @@ void setup() {
 
   // Assign default values
   for (int i = 0; i < materialSelectorNames.length; i++) {
+    float defAmp = defaultAmplitude;
+    float defDuration = defaultDuration;
+    if(i == materialSelectorNames.length - 1){
+      defAmp = ghostAmplitude;
+      defDuration = ghostDuration;
+    }
+
     materials.assign(
       i, 
       "material" + str(i), 
@@ -177,14 +186,14 @@ void setup() {
       materialGranularity[i], 
       defaultFrecuency, 
       defaultWaveForm, 
-      defaultAmplitude, 
-      defaultDuration, 
+      defAmp, 
+      defDuration,  
       defaultMaterialParameters, 
       materialColors[i]);
   }
 
   // Set positions of material selectors
-  for (int i = 0; i < materialSelectorNames.length; i++) { 
+  for (int i = 0; i < materialSelectorNames.length - 1; i++) { 
     materialSelectorPositions[i][0] = 20;
     materialSelectorPositions[i][1] = 20 + 65 * i;
     materialSelectorPositions[i][2] = 60;
@@ -192,7 +201,7 @@ void setup() {
   }
 
   // Set positions of edit selectors
-  for (int i = 0; i < parameterSelectorNames.length; i++) { 
+  for (int i = 0; i < parameterSelectorNames.length - 1; i++) { 
     sceneSwitcherPositions[i][0] = 100;
     sceneSwitcherPositions[i][1] = 20 + 65 * i;
     sceneSwitcherPositions[i][2] = 40;
@@ -213,9 +222,9 @@ void setup() {
   clearButton = new Button(this, "Clear all");
   uploadButton = new Button(this, "Upload");
 
-  materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length, materialSelectorNames, materialColors);
+  materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length - 1, materialSelectorNames, materialColors);
   materialSelector.defaultColor(mainColor); 
-  parameterSelector = new uniqueSelectButtons(this, parameterSelectorNames.length, parameterSelectorNames, materialColors);
+  parameterSelector = new uniqueSelectButtons(this, parameterSelectorNames.length - 1, parameterSelectorNames, materialColors);
   parameterSelector.defaultColor(mainColor);
 
   redGrains = new GrainCalculator(this, "red", redSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
@@ -273,15 +282,6 @@ void draw() {
   yellowGrains.updateGrains();
   redGrains.updateGrains();
   blueGrains.updateGrains();
-
-  // println(yellowSlider.state);
-  //println(yellowGrains.vibrationMode);
-
-  //println(yellowGrains.grainsPositions);
-  //println(yellowGrains.grainsMaterials);
-  //printArray(fromColorToMaterial(yellowGrains.grainsMaterials, materialColors));
-  //println(yellowSlider.state);
-  ///¡println(yellowSlider.toggleColor);
 
   // Display buttons
   fill(whiteColor);
@@ -442,9 +442,6 @@ void mouseReleased()
         blueSlider.toggleColor[i] = int(reLoad.getString("color"));
       }
 
-      //String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-      //printArray(materialPositions);
-      //println(".........................");
     }
   }
 
@@ -531,56 +528,42 @@ void sendAddMaterialList() {
   String msg = "";
 
   // send start string
-  // myPort.write(msgStart);
   msg += msgStart;
 
   // send destinarion: this function is for broadcasting
-  // myPort.write(msgDestBroadcast);
   msg += msgDestBroadcast;
-  // myPort.write(",");
   msg += ",";
 
   // send msg type
-  // myPort.write(msgAddMaterialList);
   msg += msgAddMaterialList;
-  // myPort.write(",");
   msg += ",";
 
   // send length
-  // myPort.write(str(materialSelectorNames.length));
   msg += str(materialSelectorNames.length);
-  // myPort.write(",");
   msg += ",";
 
   // send payload: material list
   for (int i = 0; i < materialSelectorNames.length; i++) {
-    // myPort.write(str(i+1));
     msg += str(i+1);
-    // myPort.write(",");
     msg += ",";
-    // myPort.write(str(materials.cvFlag[i]));
     msg += str(materials.cvFlag[i]);
-    // myPort.write(",");
     msg += ",";
     // myPort.write(str(materials.materialGranularity[i]));
     // myPort.write(",");
-    // myPort.write(str(materials.materialWaves[i]));
     msg += str(materials.materialWaves[i]);
-    // myPort.write(",");
     msg += ",";
-    // myPort.write(str(materials.materialFrecuencies[i]));
     msg += str(materials.materialFrecuencies[i]);
-    // myPort.write(",");
     msg += ",";
-    // myPort.write(str(materials.materialAmplitudes[i]));
     msg += str(materials.materialAmplitudes[i]);
-    // myPort.write(",");
     msg += ",";
-    // myPort.write(str((int)materials.materialDurations[i]));
-    msg += str((int)materials.materialDurations[i]);
 
+    if(materials.materialDurations[i] == ghostDuration){
+      msg += str(materials.materialDurations[i]);
+    } else {
+      msg += str((int)materials.materialDurations[i]);
+    }
+    
     if (i != materialSelectorNames.length - 1) {
-      // myPort.write(",");
       msg += ",";
     }
   }

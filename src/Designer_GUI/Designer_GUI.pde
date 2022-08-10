@@ -50,8 +50,8 @@ color whiteColor = textColor;
 
 // Default values
 int defaultFrecuency = 150;
-int minFrecuency = 25;
-int maxFrecuency = 275;
+int minFrecuency = 10;
+int maxFrecuency = 400;
 float defaultAmplitude = 1.0;
 int minAmplitude = 0;
 int maxAmplitude = 1;
@@ -137,7 +137,7 @@ String[] fromColorToMaterial(ArrayList<Integer> rawColors, color[] materialColor
 }
 
 void settings() {
-  size(int(displayWidth * 0.4), int(displayHeight * 0.78));
+  size(1000, 900);
 }
 
 void setup() {
@@ -292,7 +292,7 @@ void draw() {
 }
 
 void frame2Start(int index, String name) {
-  sa = new SecondApplet(name, index);
+  sa = new SecondApplet(name, index, materialColors[index]);
   frame2Exit = false;
 }
 

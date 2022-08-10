@@ -1,28 +1,30 @@
 class SecondApplet extends PApplet {
     String materialName;
     int materialIndex;
+    color materialColor;
     int sliderSep = 80;
 
     // UI Elements
     uniqueSelectButtons waveSelector, cvSelector;
     Button saveButton, resetButton;
-    Slider amplitudeSlider, durationSlider;
-    DiscreteSlider frecuencySlider, grainSlider;
+    Slider amplitudeSlider, durationSlider, frecuencySlider;
+    DiscreteSlider grainSlider;
 
     String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Triangle"};
     String[] cvSelectorName = {"Motion coupled", "Continuous"};
     int[][] cvSelectorPositions = new int [cvSelectorName.length][4];
     int[][] waveSelectorPositions = new int[waveSelectorName.length][4];
 
-    public SecondApplet(String materialName, int materialIndex) {
+    public SecondApplet(String materialName, int materialIndex, color materialColor) {
         super();
         this.materialName = materialName;
         this.materialIndex = materialIndex;
+        this.materialColor = materialColor;
         PApplet.runSketch(new String[]{this.getClass().getName()}, this);
     }
 
     public void settings() {
-        size(580, 600);
+        size(620, 610);
     }
 
     public void setup() {
@@ -34,9 +36,9 @@ class SecondApplet extends PApplet {
 
         amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
         durationSlider= new Slider(this, "Duration", 'r', minDuration, maxDuration, materials.materialDurations[materialIndex], "ms");
-        //frecuencySlider = new Slider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");
-        frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
-        frecuencySlider.showTicks(false);
+        frecuencySlider = new Slider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");
+      //  frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
+      //  frecuencySlider.showTicks(false);
         grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex], maxBin - minBin, 360, "grains");
 
         saveButton = new Button(this, "Save", 's');
@@ -71,7 +73,11 @@ class SecondApplet extends PApplet {
     }
 
     public void draw() {
-        this.background(mainColor);
+       this.background(materialColor); //make the colours super obvious
+       fill(mainColor,210);
+       rect(10,10,width-20, height-20);
+     //  this.translate(10,10);
+
 
         this.fill(whiteColor);
         this.text("Choose vibration mode", 15, 30);
@@ -114,7 +120,7 @@ class SecondApplet extends PApplet {
 
         // Display text
         this.stroke(whiteColor);
-        line(0, height-25, width, height-25);
+       // line(0, height-25, width, height-25);
 
         // Button events
         if (saveButton.isClicked()) {

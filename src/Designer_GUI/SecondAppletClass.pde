@@ -135,7 +135,7 @@ class SecondApplet extends PApplet {
             Float amplitudeValue = amplitudeSlider.getSliderValue();
             //Float amplitudeValue = amplitudeSlider.getSliderValue() - amplitudeSlider.getSliderValue()%0.01;
             //print(amplitudeValue);
-           float durationValue = 1000 * (1.0/float(frecuencyValue) * (durationSlider.getSliderValue()/2.0));
+           int durationValue = int(1000000 * (1.0/float(frecuencyValue) * (durationSlider.getSliderValue()/2.0)));
             print("pi: ");
               println(durationSlider.getSliderValue());
             print("duration: ");

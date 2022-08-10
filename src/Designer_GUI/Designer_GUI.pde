@@ -571,45 +571,68 @@ void sendStopAugmentation(String destination) {
 
 void sendAddMaterialList() {
   println("[INFO] START SENDING LIST OF MATERIALS");
-
+  String msg = "";
   // send start string
-  myPort.write(msgStart);
+  // myPort.write(msgStart);
+  msg += msgStart;
 
   // send destinarion: this function is for broadcasting
-  myPort.write(msgDestBroadcast);
-  myPort.write(",");
+  // myPort.write(msgDestBroadcast);
+  msg += msgDestBroadcast;
+  // myPort.write(",");
+  msg += ",";
 
   // send msg type
-  myPort.write(msgAddMaterialList);
-  myPort.write(",");
+  // myPort.write(msgAddMaterialList);
+  msg += msgAddMaterialList;
+  // myPort.write(",");
+  msg += ",";
 
   // send length
-  myPort.write(str(materialSelectorNames.length));
-  myPort.write(",");
+  // myPort.write(str(materialSelectorNames.length));
+  msg += str(materialSelectorNames.length);
+  // myPort.write(",");
+  msg += ",";
 
   // send payload: material list
   for (int i = 0; i < materialSelectorNames.length; i++) {
-    myPort.write(str(i+1));
-    myPort.write(",");
-    myPort.write(str(materials.cvFlag[i]));
-    myPort.write(",");
-    myPort.write(str(materials.materialGranularity[i]));
-    myPort.write(",");
-    myPort.write(str(materials.materialWaves[i]+1));
-    myPort.write(",");
-    myPort.write(str(materials.materialFrecuencies[i]));
-    myPort.write(",");
-    myPort.write(str(materials.materialAmplitudes[i]));
-    myPort.write(",");
-    myPort.write(str(materials.materialDurations[i]));
+    // myPort.write(str(i+1));
+    msg += str(i+1);
+    // myPort.write(",");
+    msg += ",";
+    // myPort.write(str(materials.cvFlag[i]));
+    msg += str(materials.cvFlag[i]);
+    // myPort.write(",");
+    msg += ",";
+    // myPort.write(str(materials.materialGranularity[i]));
+    // myPort.write(",");
+    // myPort.write(str(materials.materialWaves[i]));
+    msg += str(materials.materialWaves[i]);
+    // myPort.write(",");
+    msg += ",";
+    // myPort.write(str(materials.materialFrecuencies[i]));
+    msg += str(materials.materialFrecuencies[i]);
+    // myPort.write(",");
+    msg += ",";
+    // myPort.write(str(materials.materialAmplitudes[i]));
+    msg += str(materials.materialAmplitudes[i]);
+    // myPort.write(",");
+    msg += ",";
+    // myPort.write(str((int)materials.materialDurations[i]));
+    msg += str((int)materials.materialDurations[i]);
 
     if (i != materialSelectorNames.length - 1) {
-      myPort.write(",");
+      // myPort.write(",");
+      msg += ",";
     }
   }
 
   // send end string
   myPort.write(msgEnd);
+  msg += msgEnd;
+
+  myPort.write(msg);
+  println(msg);
 
   // PRINTING SECTION -----------------------
   // send start string
@@ -635,7 +658,7 @@ void sendAddMaterialList() {
     print(",");
     //print(str(materials.materialGranularity[i]));
     //print(",");
-    print(str(materials.materialWaves[i]+1));
+    print(str(materials.materialWaves[i]));
     print(",");
     print(str(materials.materialFrecuencies[i]));
     print(",");

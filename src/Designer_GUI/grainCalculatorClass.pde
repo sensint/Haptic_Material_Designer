@@ -71,23 +71,6 @@ public class GrainCalculator {
 
         if (granularityPointer[i] >= 0) { //if its not -1 (-1 is the default value)
 
-          //                    if (vibrationMode[granularityPointer[i]] == 1) {
-          //                        //println("ES MOTION COUPLED");
-          //                        //the nextline is where all the assignements happen       
-          //                        globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
-          //                        //here
-          //                    } else if (vibrationMode[granularityPointer[i]] == 0) {
-          //                        //println("ES CV");
-
-          //                        PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
-          //                        PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
-
-          //                        //println(p1);
-          //                        //println(p2);
-
-          //                        drawWave(p1, p2);
-          //                    }
-          //println("FIN PRINLN -------------------");
           globalGrainID = this.drawGrains(i, this.globalGrainID);
         } 
 
@@ -101,20 +84,6 @@ public class GrainCalculator {
         //draw the grains per line:
         if (granularityPointer[i] >= 0) {
 
-          //if (vibrationMode[granularityPointer[i]] == 1) {
-          //    println("It is MOTION COUPLED");
-
-          //    //the nextline is where all the assignements happen
-          //    globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
-          //} else if (vibrationMode[granularityPointer[i]] == 0) {
-          //    println("It is CV");
-          //    PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
-          //    PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
-
-          //    //println(p1);
-          //    //println(p2);
-          //    drawWave(p1, p2);
-          //}
           globalGrainID = this.drawGrains(i, this.globalGrainID); //returns the number of grains. calculates and prints their position
         }
 
@@ -192,9 +161,20 @@ public class GrainCalculator {
       PVector p1 = new PVector(xPosition, lineIndexStart * segmentSize + yPosition);
       PVector p2 = new PVector(xPosition, lineIndexEnd * segmentSize + yPosition);
 
+      int disGhost = 6;
+      // Ghost grain 1
+      grainsPositionsStart.add(int((lineIndexStart * segmentSize) * scalarForOutput) - disGhost);
+      grainsPositionsEnd.add(int((lineIndexStart * segmentSize) * scalarForOutput) - disGhost);
+      grainsMaterials.add(int(displayColor[6]));
+
       grainsPositionsStart.add(int((lineIndexStart * segmentSize) * scalarForOutput));
       grainsPositionsEnd.add(int((lineIndexEnd * segmentSize) * scalarForOutput));
       grainsMaterials.add(int(displayColor[granularityPointer[i]]));
+
+      // Ghost grain 2
+      grainsPositionsStart.add(int((lineIndexEnd * segmentSize) * scalarForOutput) + disGhost);
+      grainsPositionsEnd.add(int((lineIndexEnd * segmentSize) * scalarForOutput) + disGhost);
+      grainsMaterials.add(int(displayColor[6]));
 
       drawWave(p1, p2, frecMultiplier);
     }

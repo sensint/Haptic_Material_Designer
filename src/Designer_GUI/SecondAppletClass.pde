@@ -35,7 +35,7 @@ class SecondApplet extends PApplet {
         //println(materials.materialGranularity[materialIndex] / 10);
 
         amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
-        durationSlider= new DiscreteSlider(this, "Duration", 'r', 0, 8, 2, 8, 504, "π Radians");
+        durationSlider= new DiscreteSlider(this, "Duration", 'r', 0, 8, 2, 8, 504, ""); //"π Radians")
        // frecuencySlider = new Slider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");// 
        frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
       //  frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
@@ -107,6 +107,11 @@ class SecondApplet extends PApplet {
         frecuencySlider.display(20, 190 + sliderSep, 500, 40);
         this.fill(secondaryColor);
         amplitudeSlider.display(20, 190 + sliderSep * 2, 500, 40);
+        float msFloat = 1000 * (1.0/int(frecuencySlider.getSliderValue()) * (durationSlider.getSliderValue()/2.0));
+        String ms = "0";
+        ms = String.format( "%.2f", msFloat);
+        
+       this.text( ms + " ms", 533, 230 + sliderSep * 3);
         this.fill(secondaryColor);
         durationSlider.display(20, 190 + sliderSep * 3, 504, 40);
 

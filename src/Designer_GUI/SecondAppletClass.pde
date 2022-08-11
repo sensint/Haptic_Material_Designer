@@ -8,7 +8,8 @@ class SecondApplet extends PApplet {
   uniqueSelectButtons waveSelector, cvSelector;
   Button saveButton, resetButton;
   Slider amplitudeSlider;
-  DiscreteSlider phaseSlider, grainSlider,  frecuencySlider;
+  DiscreteSlider phaseSlider, grainSlider;
+  FrequencySlider frecuencySlider;
   
   String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Triangle"};
   String[] cvSelectorName = {"Motion coupled", "Continuous"};
@@ -36,10 +37,10 @@ class SecondApplet extends PApplet {
     
     amplitudeSlider = new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
     phaseSlider = new DiscreteSlider(this, "Phase/Duration", 'r', minPhase, maxPhase, defaultPhase, maxPhase - minPhase, 504, ""); //"π Radians")
-    // frecuencySlider = new Slider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");// 
-    frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
+     frecuencySlider = new FrequencySlider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");// 
+   // frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
     //  frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
-    frecuencySlider.showTicks(false);
+   // frecuencySlider.showTicks(false);
     grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex], maxBin - minBin, 360, "grains");
     
     saveButton = new Button(this, "Save", 's');
@@ -159,7 +160,7 @@ class SecondApplet extends PApplet {
       // Save data to JSON object -----------------------------------------------------------------------------
       JSONObject currentMaterial = new JSONObject();
       currentMaterial.setString("material_id", str(materialIndex));
-      currentMaterial.setString("frecuency", str(frecuencyValue));
+      currentMaterial.setString("frecuency", str(frecuencyValue)); // double check please
       currentMaterial.setString("amplitude", str(amplitudeValue));
       currentMaterial.setString("phase", str(phaseValue));
       currentMaterial.setString("grains", str(grainsValue));

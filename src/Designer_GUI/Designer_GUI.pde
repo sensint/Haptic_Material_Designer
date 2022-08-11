@@ -274,15 +274,6 @@ void draw() {
   redGrains.updateGrains();
   blueGrains.updateGrains();
 
-  // println(yellowSlider.state);
-  //println(yellowGrains.vibrationMode);
-
-  //println(yellowGrains.grainsPositions);
-  //println(yellowGrains.grainsMaterials);
-  //printArray(fromColorToMaterial(yellowGrains.grainsMaterials, materialColors));
-  //println(yellowSlider.state);
-  ///¡println(yellowSlider.toggleColor);
-
   // Display buttons
   fill(whiteColor);
   saveButton.display(20, 770, 100, 35);  

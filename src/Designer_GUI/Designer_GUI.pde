@@ -49,17 +49,17 @@ color textColor = #E0E1DD;
 color whiteColor = textColor;
 
 // Default values
-int defaultFrecuency = 150;
+int defaultFrecuency = 119;
 int minFrecuency = 10;
 int maxFrecuency = 400;
 float defaultAmplitude = 0.5;
 float ghostAmplitude = 0.0;
 int minAmplitude = 0;
 int maxAmplitude = 1;
-int defaultDuration = 10;
-int minDuration = 2;
-int maxDuration = 20;
-float ghostDuration = 10; // changed from ms to us
+int defaultDuration = 10000;
+int minDuration = 2000;
+int maxDuration = 20000;
+float ghostDuration = 10000; // changed from ms to us
 int minBin = 1;
 int maxBin = 10;
 int defaultWaveForm = 0;
@@ -558,7 +558,7 @@ void sendAddMaterialList() {
     msg += ",";
 
     if(materials.materialDurations[i] == ghostDuration){
-      msg += str(materials.materialDurations[i]);
+      msg += str((int)materials.materialDurations[i]);
     } else {
       msg += str((int)materials.materialDurations[i]);
     }

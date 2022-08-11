@@ -8,7 +8,7 @@ class SecondApplet extends PApplet {
   uniqueSelectButtons waveSelector, cvSelector;
   Button saveButton, resetButton;
   Slider amplitudeSlider;
-  DiscreteSlider durationSlider, grainSlider,  frecuencySlider;
+  DiscreteSlider phaseSlider, grainSlider,  frecuencySlider;
   
   String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Triangle"};
   String[] cvSelectorName = {"Motion coupled", "Continuous"};
@@ -35,7 +35,7 @@ class SecondApplet extends PApplet {
     //println(materials.materialGranularity[materialIndex] / 10);
     
     amplitudeSlider = new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
-    durationSlider = new DiscreteSlider(this, "Duration", 'r', 0, 8, 2, 8, 504, ""); //"π Radians")
+    phaseSlider = new DiscreteSlider(this, "Phase/Duration", 'r', minPhase, maxPhase, defaultPhase, maxPhase - minPhase, 504, ""); //"π Radians")
     // frecuencySlider = new Slider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");// 
     frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
     //  frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
@@ -106,14 +106,14 @@ class SecondApplet extends PApplet {
     frecuencySlider.display(20, 190 + sliderSep, 500, 40);
     this.fill(secondaryColor);
     amplitudeSlider.display(20, 190 + sliderSep * 2, 500, 40);
-    float msFloat = 1000 * (1.0 / int(frecuencySlider.getSliderValue()) * (durationSlider.getSliderValue() / 2.0));
+    float msFloat = 1000 * (1.0 / int(frecuencySlider.getSliderValue()) * (phaseSlider.getSliderValue() / 2.0));
     
     String ms = "0";
     ms = String.format("%.2f", msFloat);
     
     this.text(ms + " ms", 533, 230 + sliderSep * 3);
     this.fill(secondaryColor);
-    durationSlider.display(20, 190 + sliderSep * 3, 504, 40);
+    phaseSlider.display(20, 190 + sliderSep * 3, 504, 40);
     
     // Display wave selector
     waveSelector.display(waveSelectorPositions);
@@ -135,9 +135,10 @@ class SecondApplet extends PApplet {
       Float amplitudeValue = amplitudeSlider.getSliderValue();
       //Float amplitudeValue = amplitudeSlider.getSliderValue() - amplitudeSlider.getSliderValue()%0.01;
       //print(amplitudeValue);
-      int durationValue = int(1000000 * (1.0 / float(frecuencyValue) * (durationSlider.getSliderValue() / 2.0)));
+      int durationValue = int(1000000 * (1.0 / float(frecuencyValue) * (phaseSlider.getSliderValue() / 2.0)));
+      int phaseValue = phaseSlider.getSliderValue();
       print("pi: ");
-      println(durationSlider.getSliderValue());
+      println(phaseSlider.getSliderValue());
       print("duration: ");
       println(durationValue);
       int grainsValue = 0;
@@ -160,7 +161,7 @@ class SecondApplet extends PApplet {
       currentMaterial.setString("material_id", str(materialIndex));
       currentMaterial.setString("frecuency", str(frecuencyValue));
       currentMaterial.setString("amplitude", str(amplitudeValue));
-      currentMaterial.setString("duration", str(durationValue));
+      currentMaterial.setString("phase", str(phaseValue));
       currentMaterial.setString("grains", str(grainsValue));
       currentMaterial.setString("waveform", str(waveformValue));
       currentMaterial.setString("cv", str(cvValue));
@@ -173,6 +174,7 @@ class SecondApplet extends PApplet {
       materials.materialWaves[materialIndex] = waveformValue;
       materials.cvFlag[materialIndex] = cvValue;
       materials.materialGranularity[materialIndex] = grainsValue;
+      materials.materialPhases[materialIndex] = phaseValue;
       // if (cvSelector.activeButton() == 0) {
       //     materials.materialGranularity[materialIndex] =  0;
       // } else if (cvSelector.activeButton() == 1) {
@@ -199,7 +201,7 @@ class SecondApplet extends PApplet {
     if (resetButton.isClicked()) {
       frecuencySlider.setSliderValue(defaultFrecuency);
       amplitudeSlider.setSliderValue(defaultAmplitude);
-      durationSlider.setSliderValue(defaultDuration);
+      phaseSlider.setSliderValue(defaultPhase);
       grainSlider.setSliderValue(materials.materialGranularity[materialIndex]);
       waveSelector.setValue(defaultWave);
       

@@ -56,10 +56,19 @@ float defaultAmplitude = 0.5;
 float ghostAmplitude = 0.0;
 int minAmplitude = 0;
 int maxAmplitude = 1;
-int defaultDuration = 10000;
-int minDuration = 2000;
-int maxDuration = 20000;
-float ghostDuration = 10000; // changed from ms to us
+// int defaultDuration = 2;
+// int minDuration = 0;
+// int maxDuration = 8;
+
+int defaultPhase = 2;
+int minPhase = 0;
+int maxPhase = 8;
+
+int defaultDuration = int(1000000 * (1.0 / defaultFrecuency * (defaultPhase / 2.0)));
+// int defaultDuration = 10000;
+// int minDuration = 2000;
+// int maxDuration = 20000;
+float ghostDuration = 1000; // changed from ms to us
 int minBin = 1;
 int maxBin = 10;
 int defaultWaveForm = 0;
@@ -160,7 +169,7 @@ void setup() {
     currentMaterial.setString("material_id", str(i));
     currentMaterial.setString("frecuency", str(defaultFrecuency));
     currentMaterial.setString("amplitude", str(defaultAmplitude));
-    currentMaterial.setString("duration", str(defaultDuration));
+    currentMaterial.setString("phase", str(defaultPhase));
     currentMaterial.setString("grains", str(materialGranularity[i]));
     currentMaterial.setString("waveform", str(defaultWave));
     currentMaterial.setString("cv", str(defaultMode));
@@ -173,10 +182,12 @@ void setup() {
   // Assign default values
   for (int i = 0; i < materialSelectorNames.length; i++) {
     float defAmp = defaultAmplitude;
-    float defDuration = defaultDuration;
+    int defPhase = defaultPhase;
+    float defDur = defaultDuration;
     if(i == materialSelectorNames.length - 1){
       defAmp = ghostAmplitude;
-      defDuration = ghostDuration;
+      defDur = ghostDuration;
+      defPhase = 1;
     }
 
     materials.assign(
@@ -187,7 +198,8 @@ void setup() {
       defaultFrecuency, 
       defaultWaveForm, 
       defAmp, 
-      defDuration,  
+      defPhase,
+      defDur,
       defaultMaterialParameters, 
       materialColors[i]);
   }
@@ -415,7 +427,7 @@ void mouseReleased()
         JSONObject matLoad = materialsLoad.getJSONObject(i);
         materials.materialFrecuencies[i] = int(matLoad.getString("frecuency"));
         materials.materialAmplitudes[i] = float(matLoad.getString("amplitude"));
-        materials.materialDurations[i] = float(matLoad.getString("duration"));
+        materials.materialPhases[i] = int(matLoad.getString("phase"));
         materials.materialWaves[i] = int(matLoad.getString("waveform"));
         materials.materialGranularity[i] = int(matLoad.getString("grains"));
         materials.cvFlag[i] = int(matLoad.getString("cv"));
@@ -568,7 +580,7 @@ void sendAddMaterialList() {
     }
   }
   // send end string
-  myPort.write(msgEnd);
+  // myPort.write(msgEnd);
   msg += msgEnd;
 
   myPort.write(msg);

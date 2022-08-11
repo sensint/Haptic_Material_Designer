@@ -194,7 +194,8 @@ class SecondApplet extends PApplet {
       redGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
       blueGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
       
-      this.text("Parameters saved.", 20, height - 5);
+      // this.text("Parameters saved.", 20, height - 5);
+      this.text("Parameters saved.", 20, height-20);
       }
     
     // Reset button
@@ -205,7 +206,8 @@ class SecondApplet extends PApplet {
       grainSlider.setSliderValue(materials.materialGranularity[materialIndex]);
       waveSelector.setValue(defaultWave);
       
-      this.text("Parameters reseted.", 20, height - 5);
+      // this.text("Parameters reseted.", 20, height - 5);
+      this.text("Parameters reseted.", 20, height - 20);
       }
   }
   

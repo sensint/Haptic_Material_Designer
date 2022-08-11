@@ -65,6 +65,7 @@ int minPhase = 0;
 int maxPhase = 8;
 
 int defaultDuration = int(1000000 * (1.0 / defaultFrecuency * (defaultPhase / 2.0)));
+// print(defaultDuration);
 // int defaultDuration = 10000;
 // int minDuration = 2000;
 // int maxDuration = 20000;
@@ -284,6 +285,15 @@ void draw() {
       saActive = true;
     }
   }
+
+  // Draw right and left texts
+  fill(100);
+  rect(800, 20, 120, 50);
+  fill(100);
+  rect(800, 680, 120, 50);
+  fill(whiteColor);
+  text("Max", 840, 50);
+  text("Min", 840, 710);
 
   // Display physical sliders
   redSlider.drawSlider(400, 25, 90, 700);

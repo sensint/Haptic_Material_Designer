@@ -7,7 +7,7 @@ JSONArray yellowJSON;
 JSONArray redJSON;
 JSONArray blueJSON;
 
-Serial myPort;
+// Serial myPort;
 
 // Delimiters
 String msgStart = "<";
@@ -56,19 +56,12 @@ float defaultAmplitude = 0.5;
 float ghostAmplitude = 0.0;
 int minAmplitude = 0;
 int maxAmplitude = 1;
-// int defaultDuration = 2;
-// int minDuration = 0;
-// int maxDuration = 8;
 
 int defaultPhase = 2;
 int minPhase = 0;
 int maxPhase = 8;
 
 int defaultDuration = int(1000000 * (1.0 / defaultFrecuency * (defaultPhase / 2.0)));
-// print(defaultDuration);
-// int defaultDuration = 10000;
-// int minDuration = 2000;
-// int maxDuration = 20000;
 float ghostDuration = 1000; // changed from ms to us
 int minBin = 1;
 int maxBin = 10;
@@ -107,8 +100,8 @@ color[] materialColors = {
   color(239, 71, 111), 
   color(133, 113, 141), 
   color(17, 184, 165), 
-  color(5, 200, 129),
-  color(255, 255, 100),
+  color(5, 200, 129), 
+  color(255, 255, 100), 
 };
 
 color[] uiColors = {
@@ -135,8 +128,8 @@ String[] getMaterialSequence(color[] sliderColors, color[] materialColors) {
   return temp;
 }
 
-String[] fromColorToMaterial(ArrayList<Integer> rawColors, color[] materialColors) {
-  String[] temp = new String[rawColors.size()];
+String[]fromColorToMaterial(ArrayList<Integer> rawColors, color[] materialColors) {
+  String[]temp = new String[rawColors.size()];
   for (int i = 0; i < rawColors.size(); i++) {
     for (int j = 0; j < materialColors.length; j++) {
       if (rawColors.get(i) == materialColors[j]) {
@@ -157,10 +150,10 @@ void setup() {
   surface.setTitle("Tactile Symbol Designer");
   textSize(15);
 
-  println("Ports");
-  printArray(Serial.list());
-  myPort = new Serial(this, Serial.list()[0], 115200);
-  println(Serial.list()[0]);
+  // println("Ports");
+  // printArray(Serial.list());
+  // myPort = new Serial(this, Serial.list()[0], 115200);
+  // println(Serial.list()[0]);
 
   data = new JSONObject();
   materialJSON = new JSONArray();
@@ -185,7 +178,7 @@ void setup() {
     float defAmp = defaultAmplitude;
     int defPhase = defaultPhase;
     float defDur = defaultDuration;
-    if(i == materialSelectorNames.length - 1){
+    if (i == materialSelectorNames.length - 1) {
       defAmp = ghostAmplitude;
       defDur = ghostDuration;
       defPhase = 1;
@@ -199,8 +192,8 @@ void setup() {
       defaultFrecuency, 
       defaultWaveForm, 
       defAmp, 
-      defPhase,
-      defDur,
+      defPhase, 
+      defDur, 
       defaultMaterialParameters, 
       materialColors[i]);
   }
@@ -333,10 +326,10 @@ void mouseReleased()
   // Save button event
   if (saveButton.isClicked()) {
 
-    selectOutput("Type the name of the design:", "fileSelectedJSON", dataFile( ".json" ));
+    selectOutput("Type thename of the design : ", "fileSelectedJSON", dataFile(".json"));
 
     while (fileTyped == false) {
-      println("No filename saved yet.");
+      println("No filenamesaved yet.");
     }
 
     if (filenameJSON != "") {
@@ -373,7 +366,7 @@ void mouseReleased()
       data.setJSONArray("blue", blueJSON);
 
       filenameJSON = filenameJSON.replace("\\", "/");
-      // println(filenameJSON);
+      println(filenameJSON);
       saveJSONObject(data, filenameJSON);
     }
 
@@ -409,14 +402,14 @@ void mouseReleased()
   // Load button event
   if (loadButton.isClicked()) {
 
-    println("Load cliecke");
+    println("Load clicked");
 
-    selectInput("Select a file to process:", "fileSelected", dataFile( "*.json" ));
+    selectInput("Select a file to process : ", "fileSelected", dataFile(" * .json"));
 
     int aa = 0;
     while (fileReaded == false) {
-      println("No selected loaded yet: " + str(aa));
-      aa+=1;
+      println("No selectedloaded yet : " + str(aa));
+      aa += 1;
     }
 
     if (selectedDesign != "") {
@@ -463,7 +456,6 @@ void mouseReleased()
         blueSlider.state[i] = int(reLoad.getString("material"));
         blueSlider.toggleColor[i] = int(reLoad.getString("color"));
       }
-
     }
   }
 
@@ -512,10 +504,10 @@ void sendStartAugmentation(String destination) {
   // send end string 
   msg += msgEnd;
 
-  myPort.write(msg);
+  // myPort.write(msg);
   println(msg);
 
-  println("[INFO] END SENDING: START AUGMENTATION\n");
+  println("[INFO] END SENDING : START AUGMENTATION\n");
 }
 
 void sendStopAugmentation(String destination) {
@@ -539,10 +531,10 @@ void sendStopAugmentation(String destination) {
   // send end string 
   msg += msgEnd;
 
-  myPort.write(msg);
+  // myPort.write(msg);
   println(msg);
 
-  println("[INFO] END SENDING: STOP AUGMENTATION\n");
+  println("[INFO] END SENDING : STOP AUGMENTATION\n");
 }
 
 void sendAddMaterialList() {
@@ -552,7 +544,7 @@ void sendAddMaterialList() {
   // send start string
   msg += msgStart;
 
-  // send destinarion: this function is for broadcasting
+  // send destinarion : this function is for broadcasting
   msg += msgDestBroadcast;
   msg += ",";
 
@@ -564,9 +556,9 @@ void sendAddMaterialList() {
   msg += str(materialSelectorNames.length);
   msg += ",";
 
-  // send payload: material list
+  // send payload : material list
   for (int i = 0; i < materialSelectorNames.length; i++) {
-    msg += str(i+1);
+    msg += str(i + 1);
     msg += ",";
     msg += str(materials.cvFlag[i]);
     msg += ",";
@@ -579,21 +571,20 @@ void sendAddMaterialList() {
     msg += str(materials.materialAmplitudes[i]);
     msg += ",";
 
-    if(materials.materialDurations[i] == ghostDuration){
+    if (materials.materialDurations[i] == ghostDuration) {
       msg += str((int)materials.materialDurations[i]);
     } else {
       msg += str((int)materials.materialDurations[i]);
     }
-    
+
     if (i != materialSelectorNames.length - 1) {
       msg += ",";
     }
   }
-  // send end string
-  // myPort.write(msgEnd);
+
   msg += msgEnd;
 
-  myPort.write(msg);
+  // myPort.write(msg);
   println(msg);
 
   println("[INFO] END SENDING LIST OF MATERIALS\n");
@@ -602,7 +593,7 @@ void sendAddMaterialList() {
 void sendUpdateGrainSequence(String destination, String slider) {
   String msg = "";
 
-  String [] grainMaterials = {};
+  String[] grainMaterials = {};
   ArrayList<Integer> generalGrainsPositionsStart = new ArrayList<Integer>();
   ArrayList<Integer> generalGrainsPositionsEnd = new ArrayList<Integer>();
 
@@ -651,9 +642,9 @@ void sendUpdateGrainSequence(String destination, String slider) {
   }
 
   // send data
-  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
+  for (int i = 0; i < generalGrainsPositionsStart.size(); i++) {
 
-    msg += str(int(grainMaterials[i])+1);
+    msg += str(int(grainMaterials[i]) + 1);
     msg += ",";
     msg += generalGrainsPositionsStart.get(i).toString();
     msg += ",";
@@ -667,18 +658,17 @@ void sendUpdateGrainSequence(String destination, String slider) {
   // send end string
   msg += msgEnd;
 
-  myPort.write(msg);
+  // myPort.write(msg);
   println(msg);
 
   println("[INFO] END UPDATING LIST OF SEQUENCES\n");
-
 }
 
 void sendAddGrainSequence(String destination, String slider) {
 
   String msg = "";
 
-  String [] grainMaterials = {};
+  String[] grainMaterials = {};
   ArrayList<Integer> generalGrainsPositionsStart = new ArrayList<Integer>();
   ArrayList<Integer> generalGrainsPositionsEnd = new ArrayList<Integer>();
 
@@ -727,15 +717,15 @@ void sendAddGrainSequence(String destination, String slider) {
   }
 
   // send data
-  for (int i=0; i<generalGrainsPositionsStart.size(); i++) {
+  for (int i = 0; i < generalGrainsPositionsStart.size(); i++) {
 
-    msg += str(int(grainMaterials[i])+1);    
+    msg += str(int(grainMaterials[i]) + 1); 
     msg += ",";
     msg += generalGrainsPositionsStart.get(i).toString();
     msg += ",";
     msg += generalGrainsPositionsEnd.get(i).toString();
 
-      if (i != generalGrainsPositionsStart.size() - 1) {
+    if (i != generalGrainsPositionsStart.size() - 1) {
       msg += ",";
     }
   }
@@ -743,7 +733,7 @@ void sendAddGrainSequence(String destination, String slider) {
   // send end string
   msg += msgEnd;
 
-  myPort.write(msg);
+  // myPort.write(msg);
   println(msg);
 
   println("[INFO] END ADDING LIST OF SEQUENCE\n");

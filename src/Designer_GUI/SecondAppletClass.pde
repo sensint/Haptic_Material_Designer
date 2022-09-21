@@ -32,15 +32,9 @@ class SecondApplet extends PApplet {
     textSize(15);
     surface.setTitle("Customize material " + materialName);
     
-    //print("Se inicia el slider con grains: ");
-    //println(materials.materialGranularity[materialIndex] / 10);
-    
     amplitudeSlider = new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
     phaseSlider = new DiscreteSlider(this, "Phase/Duration", 'r', minPhase, maxPhase, defaultPhase, maxPhase - minPhase, 504, ""); //"π Radians")
-     frecuencySlider = new FrequencySlider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");// 
-   // frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
-    //  frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500, "Hz");
-   // frecuencySlider.showTicks(false);
+    frecuencySlider = new FrequencySlider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");// 
     grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex], maxBin - minBin, 360, "grains");
     
     saveButton = new Button(this, "Save", 's');
@@ -52,14 +46,14 @@ class SecondApplet extends PApplet {
       waveSelectorPositions[i][1] = 190;
       waveSelectorPositions[i][2] = 70;
       waveSelectorPositions[i][3] = 40;
-      }
+    }
     
     for (int i = 0; i < cvSelectorName.length; i++) { 
       cvSelectorPositions[i][0] = 20;
       cvSelectorPositions[i][1] = 50 * i + 45;
       cvSelectorPositions[i][2] = 125;
       cvSelectorPositions[i][3] = 25;
-      }
+    }
     
     waveSelector = new uniqueSelectButtons(this, waveSelectorName.length, waveSelectorName, subset(uiColors, 0, 6));
     waveSelector.defaultColor(mainColor);
@@ -69,16 +63,12 @@ class SecondApplet extends PApplet {
     cvSelector.defaultColor(mainColor);
     cvSelector.setValue(materials.cvFlag[materialIndex]);
     
-    //if (materials.cvFlag[materialIndex] == true) {
-    //  cvSelector.setValue(0);
-    //}
   }
   
   public void draw() {
     this.background(materialColor); //make the colours super obvious
     fill(mainColor,210);
     rect(10, 10, width - 20, height - 20);
-    //  this.translate(10,10);
     
     this.fill(whiteColor);
     this.text("Choose vibration mode", 15, 30);
@@ -91,12 +81,12 @@ class SecondApplet extends PApplet {
       this.fill(secondaryColor); 
       this.noStroke();
       grainSlider.display(160, 45, 360, 75);
-      } else if (cvSelector.activeButton() == 1) {
+    } else if (cvSelector.activeButton() == 1) {
       // if selector is 0 means CONTINUOUS VIBRATION
       this.text("Continuous vibration selected, no grains!", 200, 90);
-      } else if (cvSelector.activeButton() == -1) {
+    } else if (cvSelector.activeButton() == -1) {
       this.text("Please, choose a vibration mode.", 220, 90);
-      }
+    }
     
     this.fill(whiteColor);
     this.text("Parameters of vibration", 15, 170);
@@ -127,34 +117,24 @@ class SecondApplet extends PApplet {
     
     // Display text
     this.stroke(whiteColor);
-    // line(0, height-25, width, height-25);
     
     // Button events
     if (saveButton.isClicked()) {
       // Get data from UI
       int frecuencyValue = int(frecuencySlider.getSliderValue());
       Float amplitudeValue = amplitudeSlider.getSliderValue();
-      //Float amplitudeValue = amplitudeSlider.getSliderValue() - amplitudeSlider.getSliderValue()%0.01;
-      //print(amplitudeValue);
       int durationValue = int(1000000 * (1.0 / float(frecuencyValue) * (phaseSlider.getSliderValue() / 2.0)));
       int phaseValue = phaseSlider.getSliderValue();
-      print("pi: ");
-      println(phaseSlider.getSliderValue());
-      print("duration: ");
-      println(durationValue);
       int grainsValue = 0;
       int waveformValue = waveSelector.activeButton();
       int cvValue = cvSelector.activeButton();
-      println(cvValue);
-      println("---");
       if (cvSelector.activeButton() == 1) {
         // if cvSelector is 0 means CV
         grainsValue = 0;
-        } else if (cvSelector.activeButton() == 0) {
+      } else if (cvSelector.activeButton() == 0) {
         // if cvSelector is 1 means MOTION COUPLED
         grainsValue = round(grainSlider.getSliderValue());
-        //grainsValue = round(grainSlider.getSliderValue());
-        }
+      }
       
       
       // Save data to JSON object -----------------------------------------------------------------------------
@@ -176,28 +156,17 @@ class SecondApplet extends PApplet {
       materials.cvFlag[materialIndex] = cvValue;
       materials.materialGranularity[materialIndex] = grainsValue;
       materials.materialPhases[materialIndex] = phaseValue;
-      // if (cvSelector.activeButton() == 0) {
-      //     materials.materialGranularity[materialIndex] =  0;
-      // } else if (cvSelector.activeButton() == 1) {
-      //     materials.materialGranularity[materialIndex] =  round(grainSlider.getSliderValue() * 10);
-      // }
-      
-      //print("Se guarda el slider con grains: ");
-      //println(grainsValue);
       
       yellowGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
       redGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
       blueGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
       
       yellowGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
-      //println( yellowGrains.vibrationMode[materialIndex]);
-      //println("aaaaaaaaaaaaaaaa");
       redGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
       blueGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
       
-      // this.text("Parameters saved.", 20, height - 5);
-      this.text("Parameters saved.", 20, height-20);
-      }
+      this.text("Parameters saved.", 20, height - 20);
+    }
     
     // Reset button
     if (resetButton.isClicked()) {
@@ -207,9 +176,8 @@ class SecondApplet extends PApplet {
       grainSlider.setSliderValue(materials.materialGranularity[materialIndex]);
       waveSelector.setValue(defaultWave);
       
-      // this.text("Parameters reseted.", 20, height - 5);
       this.text("Parameters reseted.", 20, height - 20);
-      }
+    }
   }
   
   public void exitActual() {

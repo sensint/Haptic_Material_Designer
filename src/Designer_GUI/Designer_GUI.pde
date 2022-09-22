@@ -329,7 +329,8 @@ void mouseReleased()
     selectOutput("Type thename of the design : ", "fileSelectedJSON", dataFile(".json"));
 
     while (fileTyped == false) {
-      println("No filenamesaved yet.");
+      // println("No filenamesaved yet.");
+      println("");
     }
 
     if (filenameJSON != "") {
@@ -402,13 +403,13 @@ void mouseReleased()
   // Load button event
   if (loadButton.isClicked()) {
 
-    println("Load clicked");
+    // println("Load clicked");
 
     selectInput("Select a file to process : ", "fileSelected", dataFile(" * .json"));
 
     int aa = 0;
     while (fileReaded == false) {
-      println("No selectedloaded yet : " + str(aa));
+      // println("No selectedloaded yet : " + str(aa));
       aa += 1;
     }
 

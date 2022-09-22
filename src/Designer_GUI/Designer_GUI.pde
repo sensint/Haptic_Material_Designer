@@ -7,7 +7,7 @@ JSONArray yellowJSON;
 JSONArray redJSON;
 JSONArray blueJSON;
 
-// Serial myPort;
+// Serial myPort; // Uncomment this line to use the GUI with a Teensy
 
 // Delimiters
 String msgStart = "<";
@@ -151,9 +151,9 @@ void setup() {
   textSize(15);
 
   // println("Ports");
-  // printArray(Serial.list());
-  // myPort = new Serial(this, Serial.list()[0], 115200);
-  // println(Serial.list()[0]);
+  // printArray(Serial.list()); // Uncomment this line to use the GUI with a Teensy
+  // myPort = new Serial(this, Serial.list()[0], 115200); // Uncomment this line to use the GUI with a Teensy
+  // println(Serial.list()[0]); // Uncomment this line to use the GUI with a Teensy
 
   data = new JSONObject();
   materialJSON = new JSONArray();
@@ -407,10 +407,9 @@ void mouseReleased()
 
     selectInput("Select a file to process : ", "fileSelected", dataFile(" * .json"));
 
-    int aa = 0;
     while (fileReaded == false) {
-      // println("No selectedloaded yet : " + str(aa));
-      aa += 1;
+      // println("No selectedloaded yet");
+      println(" ");
     }
 
     if (selectedDesign != "") {
@@ -505,7 +504,7 @@ void sendStartAugmentation(String destination) {
   // send end string 
   msg += msgEnd;
 
-  // myPort.write(msg);
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
   println(msg);
 
   println("[INFO] END SENDING : START AUGMENTATION\n");
@@ -532,7 +531,7 @@ void sendStopAugmentation(String destination) {
   // send end string 
   msg += msgEnd;
 
-  // myPort.write(msg);
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
   println(msg);
 
   println("[INFO] END SENDING : STOP AUGMENTATION\n");
@@ -585,7 +584,7 @@ void sendAddMaterialList() {
 
   msg += msgEnd;
 
-  // myPort.write(msg);
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
   println(msg);
 
   println("[INFO] END SENDING LIST OF MATERIALS\n");
@@ -659,7 +658,7 @@ void sendUpdateGrainSequence(String destination, String slider) {
   // send end string
   msg += msgEnd;
 
-  // myPort.write(msg);
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
   println(msg);
 
   println("[INFO] END UPDATING LIST OF SEQUENCES\n");
@@ -734,7 +733,7 @@ void sendAddGrainSequence(String destination, String slider) {
   // send end string
   msg += msgEnd;
 
-  // myPort.write(msg);
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
   println(msg);
 
   println("[INFO] END ADDING LIST OF SEQUENCE\n");

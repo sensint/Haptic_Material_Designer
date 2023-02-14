@@ -138,14 +138,14 @@ Project Link: [https://github.com/sensint/Haptic_Material_Designer](https://gith
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/sensint/Servo_Haptics.svg?style=for-the-badge
-[contributors-url]: https://github.com/sensint/Servo_Haptics/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/sensint/Servo_Haptics.svg?style=for-the-badge
-[forks-url]: https://github.com/sensint/Servo_Haptics/network/members
-[stars-shield]: https://img.shields.io/github/stars/sensint/Servo_Haptics.svg?style=for-the-badge
-[stars-url]: https://github.com/sensint/Servo_Haptics/stargazers
-[issues-shield]: https://img.shields.io/github/issues/sensint/Servo_Haptics.svg?style=for-the-badge
-[issues-url]: https://github.com/sensint/Servo_Haptics/issues
-[license-shield]: https://img.shields.io/github/license/sensint/Servo_Haptics.svg?style=for-the-badge
-[license-url]: https://github.com/sensint/Servo_Haptics/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/sensint/Haptic_Material_Designer.svg?style=for-the-badge
+[contributors-url]: https://github.com/sensint/Haptic_Material_Designer/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/sensint/Haptic_Material_Designer.svg?style=for-the-badge
+[forks-url]: https://github.com/sensint/Haptic_Material_Designer/network/members
+[stars-shield]: https://img.shields.io/github/stars/sensint/Haptic_Material_Designer.svg?style=for-the-badge
+[stars-url]: https://github.com/sensint/Haptic_Material_Designer/stargazers
+[issues-shield]: https://img.shields.io/github/issues/sensint/Haptic_Material_Designer.svg?style=for-the-badge
+[issues-url]: https://github.com/sensint/Haptic_Material_Designer/issues
+[license-shield]: https://img.shields.io/github/license/sensint/Haptic_Material_Designer.svg?style=for-the-badge
+[license-url]: https://github.com/sensint/Haptic_Material_Designer/blob/master/LICENSE
 [banner-image]: assets/img/banner_temp.PNG

@@ -147,5 +147,5 @@ Project Link: [https://github.com/sensint/Haptic_Material_Designer](https://gith
 [issues-shield]: https://img.shields.io/github/issues/sensint/Haptic_Material_Designer.svg?style=for-the-badge
 [issues-url]: https://github.com/sensint/Haptic_Material_Designer/issues
 [license-shield]: https://img.shields.io/github/license/sensint/Haptic_Material_Designer.svg?style=for-the-badge
-[license-url]: https://github.com/sensint/Haptic_Material_Designer/blob/master/LICENSE
+[license-url]: https://github.com/sensint/Haptic_Material_Designer/blob/main/LICENSE
 [banner-image]: assets/img/banner_temp.PNG

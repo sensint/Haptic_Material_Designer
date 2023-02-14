@@ -1,190 +1,185 @@
-// SECOND WINDOW ----------------------------------------------------------
 class SecondApplet extends PApplet {
-
   String materialName;
   int materialIndex;
-
+  color materialColor;
+  int sliderSep = 80;
+  
   // UI Elements
   uniqueSelectButtons waveSelector, cvSelector;
   Button saveButton, resetButton;
-  Slider amplitudeSlider, durationSlider;
-  DiscreteSlider frecuencySlider, grainSlider;
-  ADSR envelope;
-
-  String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Pulse"};
-  String[] cvSelectorName = {"CV"};
-  int[][] cvSelectorPositions = new int [1][4];
-  int[][] waveSelectorPositions = new int[4][4];
-
-  // Positions/size of the envelope box
-  int xPos = 20; 
-  int yPos = 470; 
-  int boxHeight = 200; 
-  int boxWidth = 520;
-
-  public SecondApplet(String materialName, int materialIndex) {
+  Slider amplitudeSlider;
+  DiscreteSlider phaseSlider, grainSlider;
+  FrequencySlider frecuencySlider;
+  
+  String[] waveSelectorName = {"Sine", "Sawtooth", "Square", "Triangle"};
+  String[] cvSelectorName = {"Motion coupled", "Continuous"};
+  int[][] cvSelectorPositions = new int[cvSelectorName.length][4];
+  int[][] waveSelectorPositions = new int[waveSelectorName.length][4];
+  
+  public SecondApplet(String materialName, int materialIndex, color materialColor) {
     super();
     this.materialName = materialName;
     this.materialIndex = materialIndex;
-    PApplet.runSketch(new String[]{this.getClass().getName()}, this);
+    this.materialColor = materialColor;
+    PApplet.runSketch(new String[]{this.getClass().getName()} , this);
   }
-
+  
   public void settings() {
-    size(600, 800);
+    size(620, 610);
   }
-
+  
   public void setup() {
-
     textSize(15);
-    surface.setTitle("Material designer for Material " + materialName);
-
-    // frecuencySlider= new Slider(this, "Frequency", 'r', minFrecuency, maxFrecuency,);
-    amplitudeSlider= new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex]);
-    durationSlider= new Slider(this, "Duration", 'r', minDuration, maxDuration, materials.materialDurations[materialIndex]);
-    // grainSlider= new Slider(this, "Grains", 'r', minBin, maxBin, materials.materialGranularity[materialIndex] / 10);
-
-    //frecuencySlider = new DiscreteSlider(this, "Frecuency", 'r', 300, 35);
-    frecuencySlider = new DiscreteSlider(this, "Frecuency", 'f', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], maxFrecuency - minFrecuency, 500);
-    frecuencySlider.showTicks(false);
-    grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex] / 10, maxBin - minBin, 440);
-
+    surface.setTitle("Customize material " + materialName);
+    
+    amplitudeSlider = new Slider(this, "Amplitude", 'r', minAmplitude, maxAmplitude, materials.materialAmplitudes[materialIndex], "");
+    phaseSlider = new DiscreteSlider(this, "Phase/Duration", 'r', minPhase, maxPhase, defaultPhase, maxPhase - minPhase, 504, ""); //"π Radians")
+    frecuencySlider = new FrequencySlider(this, "Frecuency", 'r', minFrecuency, maxFrecuency, materials.materialFrecuencies[materialIndex], "Hz");// 
+    grainSlider = new DiscreteSlider(this, "Grains", 'g', minBin, maxBin, materials.materialGranularity[materialIndex], maxBin - minBin, 360, "grains");
+    
     saveButton = new Button(this, "Save", 's');
     resetButton = new Button(this, "Reset", 'r');
-
-    envelope = new ADSR(this, "envelope");
-    envelope.initialize(xPos, yPos, boxHeight, boxWidth);
-
+    
     // Set positions of wave selectors
     for (int i = 0; i < waveSelectorName.length; i++) { 
-      waveSelectorPositions[i][0] = 20 + 100 * i;
-      waveSelectorPositions[i][1] = 370;
-      waveSelectorPositions[i][2] = 100;
+      waveSelectorPositions[i][0] = 20 + 85 * i;
+      waveSelectorPositions[i][1] = 190;
+      waveSelectorPositions[i][2] = 70;
       waveSelectorPositions[i][3] = 40;
     }
-
+    
     for (int i = 0; i < cvSelectorName.length; i++) { 
       cvSelectorPositions[i][0] = 20;
-      cvSelectorPositions[i][1] = 20 + 80 * 3;
-      cvSelectorPositions[i][2] = 40;
-      cvSelectorPositions[i][3] = 40;
+      cvSelectorPositions[i][1] = 50 * i + 45;
+      cvSelectorPositions[i][2] = 125;
+      cvSelectorPositions[i][3] = 25;
     }
-
-    waveSelector = new uniqueSelectButtons(this, waveSelectorName.length, waveSelectorName, subset(materialColors, 0, 4));
-    waveSelector.defaultColor(bgColor); //set a new default (should be same as background, probably)
-    waveSelector.setValue(materials.materialWaves[materialIndex]); // Set default value
-
-    cvSelector = new uniqueSelectButtons(this, cvSelectorName.length, cvSelectorName, subset(materialColors, 0, 1));
-    cvSelector.defaultColor(bgColor);
-
-    if (materials.cvFlag[materialIndex] == true) {
-      cvSelector.setValue(0);
-    }
+    
+    waveSelector = new uniqueSelectButtons(this, waveSelectorName.length, waveSelectorName, subset(uiColors, 0, 6));
+    waveSelector.defaultColor(mainColor);
+    waveSelector.setValue(materials.materialWaves[materialIndex]);
+    
+    cvSelector = new uniqueSelectButtons(this, cvSelectorName.length, cvSelectorName, subset(uiColors, 0, cvSelectorName.length));
+    cvSelector.defaultColor(mainColor);
+    cvSelector.setValue(materials.cvFlag[materialIndex]);
+    
   }
-
+  
   public void draw() {
-
-    this.background(32, 36, 48);
-
-    // Display sliders
-    int sliderSep = 80;
-    this.fill(78, 89, 111);  
-    frecuencySlider.display(20, 20, 500, 40);
-    this.fill(78, 89, 111); 
-    amplitudeSlider.display(20, 20 + sliderSep, 500, 40);
-    this.fill(78, 89, 111); 
-    durationSlider.display(20, 20 + sliderSep * 2, 500, 40);
-
-    // Display wave selector
-    this.fill(112, 190, 175); 
-    waveSelector.display(waveSelectorPositions);
+    this.background(materialColor); //make the colours super obvious
+    fill(mainColor,210);
+    rect(10, 10, width - 20, height - 20);
+    
+    this.fill(whiteColor);
+    this.text("Choose vibration mode", 15, 30);
+    
+    // Display vibration selector
     cvSelector.display(cvSelectorPositions);
-
-    if (cvSelector.activeButton() == -1) {
-      this.fill(78, 89, 111); 
-      grainSlider.display(70, 20 + sliderSep * 3, 440, 40);
+    
+    // if selector is 1 means MOTION COUPLED
+    if (cvSelector.activeButton() == 0) {
+      this.fill(secondaryColor); 
+      this.noStroke();
+      grainSlider.display(160, 45, 360, 75);
+    } else if (cvSelector.activeButton() == 1) {
+      // if selector is 0 means CONTINUOUS VIBRATION
+      this.text("Continuous vibration selected, no grains!", 200, 90);
+    } else if (cvSelector.activeButton() == -1) {
+      this.text("Please, choose a vibration mode.", 220, 90);
     }
-
-    // Display ADSR
-    this.fill(78, 89, 111);
-    envelope.displayArea();
-    this.fill(255, 255, 255);
-    envelope.displayControlPoints();
-    envelope.displayBox();
-
+    
+    this.fill(whiteColor);
+    this.text("Parameters of vibration", 15, 170);
+    
+    // Display sliders
+    this.fill(secondaryColor); 
+    this.noStroke();
+    frecuencySlider.display(20, 190 + sliderSep, 500, 40);
+    this.fill(secondaryColor);
+    amplitudeSlider.display(20, 190 + sliderSep * 2, 500, 40);
+    float msFloat = 1000 * (1.0 / int(frecuencySlider.getSliderValue()) * (phaseSlider.getSliderValue() / 2.0));
+    
+    String ms = "0";
+    ms = String.format("%.2f", msFloat);
+    
+    this.text(ms + " ms", 533, 230 + sliderSep * 3);
+    this.fill(secondaryColor);
+    phaseSlider.display(20, 190 + sliderSep * 3, 504, 40);
+    
+    // Display wave selector
+    waveSelector.display(waveSelectorPositions);
+    
     // Display buttons
-    saveButton.display(20, 740, 70, 30);
-    resetButton.display(100, 740, 70, 30);
-
+    this.fill(whiteColor);
+    saveButton.display(20, 510, 70, 30);
+    this.fill(whiteColor);
+    resetButton.display(110, 510, 70, 30);
+    
+    // Display text
+    this.stroke(whiteColor);
+    
     // Button events
     if (saveButton.isClicked()) {
-
-      // Calculate envelope values --------------------------------------------------------------------      
-      float sValue_y_mapped, aValue_mapped, dValue_mapped, rValue_mapped, aRatio, dRatio, rRatio; // declare some local variables for calculations
-
-      sValue_y_mapped = map((yPos - envelope.sustain.y()), -boxHeight, 0, 0, boxHeight);
-      env_s = sValue_y_mapped / boxHeight; // easy, sustain is a ratio of amplitude, which is also the box height in this case
-
-      // more tricky, scale positions for timing, according to duration
-      // sValue_x_mapped = map((xPos - envelope.sustain.x()), -boxWidth, 0, boxWidth, 0); // scale everything to the size of the box
-      aValue_mapped = map((xPos - envelope.attack.x()), -boxWidth, 0, boxWidth, 0);
-      dValue_mapped = map((xPos - envelope.decay.x()), -boxWidth, 0, boxWidth, 0);
-      rValue_mapped = map((xPos - envelope.release.x()), -boxWidth, 0, boxWidth, 0);
-
-      //duration = sValue_x_mapped - aValue_mapped; // user-set duration is actually the time from attack to end of sustain
-      //durationRatio = duration / boxWidth;         // calculate how much of the box is the set duration
-      //// get the proportion of the box of each timing and convert to ms, start with the attack
-      aRatio = aValue_mapped / boxWidth;                  // get the proportion of the box
-      env_a = aRatio * durationSlider.getSliderValue();  // multiply the ratio by the duration
-
-      dRatio = dValue_mapped / boxWidth;
-      env_d = dRatio * durationSlider.getSliderValue();
-
-      rRatio = rValue_mapped / boxWidth;
-      env_r = rRatio * durationSlider.getSliderValue();
-
-      // -------------------------------------------------------------------------------------------------------
-
-      JSONObject currentMaterial = new JSONObject();
-      currentMaterial.setInt("id", materialIndex);
-      // currentMaterial.setFloat("frecuency", frecuencySlider.getSliderValue());
-      currentMaterial.setFloat("amplitude", amplitudeSlider.getSliderValue());
-      currentMaterial.setFloat("duration", durationSlider.getSliderValue());
-      //currentMaterial.setFloat("num_bin", grainSlider.getSliderValue());
-      currentMaterial.setFloat("env_a", env_a);
-      currentMaterial.setFloat("env_d", env_d);
-      currentMaterial.setFloat("env_s", env_s);
-      currentMaterial.setFloat("env_r", env_r);
-      currentMaterial.setInt("wave", waveSelector.activeButton());
-      materialJSON.setJSONObject(materialIndex, currentMaterial);
-
-      // --------------------------------------------------------------------------------------------------------
-
-      // Update material properties
-      // materialGranularity[materialIndex] = int(grainSlider.getSliderValue());
-      materials.materialGranularity[materialIndex] =  round(grainSlider.getSliderValue() * 10);
-      materials.materialFrecuencies[materialIndex] = round(frecuencySlider.getSliderValue());
-      materials.materialAmplitudes[materialIndex] = amplitudeSlider.getSliderValue();
-      materials.materialWaves[materialIndex] = waveSelector.activeButton();
-      if (cvSelector.activeButton() == -1) {
-        materials.cvFlag[materialIndex] = false;
-      } else {
-        materials.cvFlag[materialIndex] = true;
+      // Get data from UI
+      int frecuencyValue = int(frecuencySlider.getSliderValue());
+      Float amplitudeValue = amplitudeSlider.getSliderValue();
+      int durationValue = int(1000000 * (1.0 / float(frecuencyValue) * (phaseSlider.getSliderValue() / 2.0)));
+      int phaseValue = phaseSlider.getSliderValue();
+      int grainsValue = 0;
+      int waveformValue = waveSelector.activeButton();
+      int cvValue = cvSelector.activeButton();
+      if (cvSelector.activeButton() == 1) {
+        // if cvSelector is 0 means CV
+        grainsValue = 0;
+      } else if (cvSelector.activeButton() == 0) {
+        // if cvSelector is 1 means MOTION COUPLED
+        grainsValue = round(grainSlider.getSliderValue());
       }
-
+      
+      
+      // Save data to JSON object -----------------------------------------------------------------------------
+      JSONObject currentMaterial = new JSONObject();
+      currentMaterial.setString("material_id", str(materialIndex));
+      currentMaterial.setString("frecuency", str(frecuencyValue)); // double check please
+      currentMaterial.setString("amplitude", str(amplitudeValue));
+      currentMaterial.setString("phase", str(phaseValue));
+      currentMaterial.setString("grains", str(grainsValue));
+      currentMaterial.setString("waveform", str(waveformValue));
+      currentMaterial.setString("cv", str(cvValue));
+      materialJSON.setJSONObject(materialIndex, currentMaterial);
+      
+      // Update material properties ----------------------------------------------------------------------------
+      materials.materialFrecuencies[materialIndex] = frecuencyValue;
+      materials.materialAmplitudes[materialIndex] = amplitudeValue;
+      materials.materialDurations[materialIndex] = durationValue;
+      materials.materialWaves[materialIndex] = waveformValue;
+      materials.cvFlag[materialIndex] = cvValue;
+      materials.materialGranularity[materialIndex] = grainsValue;
+      materials.materialPhases[materialIndex] = phaseValue;
+      
       yellowGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
       redGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
       blueGrains.granularity[materialIndex] = materials.materialGranularity[materialIndex];
+      
+      yellowGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
+      redGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
+      blueGrains.vibrationMode[materialIndex] = materials.cvFlag[materialIndex];
+      
+      this.text("Parameters saved.", 20, height - 20);
     }
-
+    
+    // Reset button
     if (resetButton.isClicked()) {
-      //frecuencySlider.setSliderValue(defaultFrecuency);
+      frecuencySlider.setSliderValue(defaultFrecuency);
       amplitudeSlider.setSliderValue(defaultAmplitude);
-      durationSlider.setSliderValue(defaultDuration);
-      //grainSlider.setSliderValue(float(materialGranularity[materialIndex] + 1));
+      phaseSlider.setSliderValue(defaultPhase);
+      grainSlider.setSliderValue(materials.materialGranularity[materialIndex]);
       waveSelector.setValue(defaultWave);
+      
+      this.text("Parameters reseted.", 20, height - 20);
     }
   }
-
+  
   public void exitActual() {
     frame2Exit = true;
     saActive = false;

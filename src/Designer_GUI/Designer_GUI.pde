@@ -1,69 +1,116 @@
 import processing.serial.*;
 
-JSONObject data; // Data
+JSONObject data;
 JSONArray materialJSON;
+JSONArray sequencesJSON;
+JSONArray yellowJSON;
+JSONArray redJSON;
+JSONArray blueJSON;
 
-// For material parameters's screen
+// Serial myPort; // Uncomment this line to use the GUI with a Teensy
+
+// Delimiters
+String msgStart = "<";
+String msgEnd = ">";
+
+// Message types
+String msgStartAugmentation = "32";
+String msgStopAugmentation = "33";
+
+String msgAddMaterial = "48";
+String msgUpdateMaterial = "49";
+String msgDeleteMaterial = "50";
+
+String msgAddMaterialList = "51";
+String msgUpdateMaterialList = "52";
+String msgDeleteMaterialList = "53";
+
+String msgAddGrainSequence = "54";
+String msgUpdateGrainSequence = "55";
+String msgDeleteGrainSequence = "56";
+
+String msgAddGrainSequenceList = "57";
+String msgUpdateGrainSequenceList = "58";
+String msgDeleteGrainSequenceList = "59";
+
+String msgDeleteAllGrainSequences = "61";
+
+String msgDestBroadcast = "0";
+
+// For material parameters' screen
 boolean frame2Exit;
 SecondApplet sa;
 boolean saActive = false;
 
-Serial myPort;
-
-// Responsive screen
+// UI Colors
+color mainColor = #0D1B2A;
+color secondaryColor = color(88, 111, 124);
+color textColor = #E0E1DD;
+color whiteColor = textColor;
 
 // Default values
-int defaultFrecuency = 143;
-int minFrecuency = 0;
-int maxFrecuency = 500;
+int defaultFrecuency = 119;
+int minFrecuency = 10;
+int maxFrecuency = 400;
 float defaultAmplitude = 0.5;
+float ghostAmplitude = 0.0;
 int minAmplitude = 0;
 int maxAmplitude = 1;
-float defaultDuration = 4;
-int minDuration = 2;
-int maxDuration = 20;
-int minBin = 0;
+
+int defaultPhase = 2;
+int minPhase = 0;
+int maxPhase = 8;
+
+int defaultDuration = int(1000000 * (1.0 / defaultFrecuency * (defaultPhase / 2.0)));
+float ghostDuration = 1000; // changed from ms to us
+int minBin = 1;
 int maxBin = 10;
 int defaultWaveForm = 0;
-float env_a = 5.0; // attack (ms)
-float env_d = 20.0; // decay (ms)
-float env_s = 0.9; // sustain (0-1)
-float env_r = 100.0; // release (ms)
-float defaultA = 5;
-float defaultD = 20;
-float defaultS = 0.9;
-float defaultR = 100;
-float[] defaultADSR = {defaultA, defaultD, defaultS, defaultR};
 int defaultWave = 0;
+int defaultMode = 0; // MOTION COUPLED = 0, CV = 1
 
 // UI Elements
-MaterialCollection materials; // materials: we only need one, we have limited it to twelve materials
-GrainCalculator yellowGrains, redGrains, blueGrains; // grain calculation: for visualizing grains and storing eventSequences
-PhysicalSlider yellowSlider, redSlider, blueSlider; // physical sliders
-uniqueSelectButtons materialSelector, parameterSelector; // material selectors
-Button saveButton, loadButton, clearButton, uploadButton; // button
+MaterialCollection materials;
+GrainCalculator yellowGrains, redGrains, blueGrains;
+PhysicalSlider yellowSlider, redSlider, blueSlider; 
+uniqueSelectButtons materialSelector, parameterSelector;
+Button saveButton, loadButton, clearButton, uploadButton;
 
-String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10"};
-String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
-int[][] sceneSwitcherPositions = new int[11][4];
-int[][] materialSelectorPositions = new int[11][4];
-int[] materialGranularity = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+String[] materialSelectorNames = {"M0", "M1", "M2", "M3", "M4", "M5", "MX"};
+String[] parameterSelectorNames = {"Edit", "Edit", "Edit", "Edit", "Edit", "Edit", "Edit"};
+
+int[][] sceneSwitcherPositions = new int[materialSelectorNames.length - 1][4];
+int[][] materialSelectorPositions = new int[materialSelectorNames.length - 1][4];
+
+int[] materialGranularity = {1, 2, 3, 4, 5, 6, 7};
 int numVerticalButtons = 10;
 
-// Colors
-color bgColor = color(18, 18, 18);
+// For loading and saving JSON files
+String selectedDesign = "";
+String filenameJSON = "";
+boolean fileReaded = false;
+boolean fileTyped = false;
+
+boolean sequencesAdded = false;
+
+// Material colors
 color[] materialColors = {
   color(248, 255, 229), 
-  color(252, 226, 145), 
   color(255, 196, 61), 
-  color(247, 134, 86), 
   color(239, 71, 111), 
-  color(186, 92, 126), 
   color(133, 113, 141), 
-  color(27, 154, 170), 
   color(17, 184, 165), 
-  color(6, 214, 160), 
-  color(5, 200, 129)
+  color(5, 200, 129), 
+  color(255, 255, 100), 
+};
+
+color[] uiColors = {
+  color(88, 111, 124), 
+  color(88, 111, 124), 
+  color(88, 111, 124), 
+  color(88, 111, 124), 
+  color(88, 111, 124), 
+  color(88, 111, 124)
 };
 
 // FIRST WINDOWS ---------------------------------------------------------
@@ -81,63 +128,78 @@ String[] getMaterialSequence(color[] sliderColors, color[] materialColors) {
   return temp;
 }
 
-
+String[]fromColorToMaterial(ArrayList<Integer> rawColors, color[] materialColors) {
+  String[]temp = new String[rawColors.size()];
+  for (int i = 0; i < rawColors.size(); i++) {
+    for (int j = 0; j < materialColors.length; j++) {
+      if (rawColors.get(i) == materialColors[j]) {
+        // temp[i] = "M" + str(j);
+        temp[i] = str(j);
+      }
+    }
+  }
+  return temp;
+}
 
 void settings() {
-  size(int(displayWidth * 0.4), int(displayHeight * 0.8));
+  size(1000, 900);
 }
 
 void setup() {
 
+  surface.setTitle("Tactile Symbol Designer");
   textSize(15);
 
-  println("Ports");
-  printArray(Serial.list());
-
-  myPort = new Serial(this, Serial.list()[0], 115200);
-  print(Serial.list()[0]);
+  // println("Ports");
+  // printArray(Serial.list()); // Uncomment this line to use the GUI with a Teensy
+  // myPort = new Serial(this, Serial.list()[0], 115200); // Uncomment this line to use the GUI with a Teensy
+  // println(Serial.list()[0]); // Uncomment this line to use the GUI with a Teensy
 
   data = new JSONObject();
   materialJSON = new JSONArray();
 
-  for (int i = 0; i < materialSelectorNames.length; i++) {
+  for (int i = 0; i < materialSelectorNames.length - 1; i++) {
     JSONObject currentMaterial = new JSONObject();
-
-    currentMaterial.setString("id", "M" + str(i));
-    currentMaterial.setFloat("frecuency", defaultFrecuency);
-    currentMaterial.setFloat("amplitude", defaultAmplitude);
-    currentMaterial.setFloat("duration", defaultDuration);
-    currentMaterial.setFloat("grains", materialGranularity[i]);
-    currentMaterial.setFloat("env_a", defaultA);
-    currentMaterial.setFloat("env_d", defaultD);
-    currentMaterial.setFloat("env_s", defaultS);
-    currentMaterial.setFloat("env_r", defaultR);
-    currentMaterial.setInt("wave", defaultWave);
-    currentMaterial.setBoolean("cv", false);
+    currentMaterial.setString("material_id", str(i));
+    currentMaterial.setString("frecuency", str(defaultFrecuency));
+    currentMaterial.setString("amplitude", str(defaultAmplitude));
+    currentMaterial.setString("phase", str(defaultPhase));
+    currentMaterial.setString("grains", str(materialGranularity[i]));
+    currentMaterial.setString("waveform", str(defaultWave));
+    currentMaterial.setString("cv", str(defaultMode));
     materialJSON.setJSONObject(i, currentMaterial);
   }
 
   materials = new MaterialCollection(); // Create our materialCollection
   int[] defaultMaterialParameters = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; // Makeup some default parameters
 
-  // Assign with dummy values and defaults
+  // Assign default values
   for (int i = 0; i < materialSelectorNames.length; i++) {
+    float defAmp = defaultAmplitude;
+    int defPhase = defaultPhase;
+    float defDur = defaultDuration;
+    if (i == materialSelectorNames.length - 1) {
+      defAmp = ghostAmplitude;
+      defDur = ghostDuration;
+      defPhase = 1;
+    }
+
     materials.assign(
       i, 
       "material" + str(i), 
-      false, 
+      defaultMode, 
       materialGranularity[i], 
       defaultFrecuency, 
       defaultWaveForm, 
-      defaultAmplitude, 
-      defaultDuration, 
-      defaultADSR, 
+      defAmp, 
+      defPhase, 
+      defDur, 
       defaultMaterialParameters, 
       materialColors[i]);
   }
 
   // Set positions of material selectors
-  for (int i = 0; i < materialSelectorNames.length; i++) { 
+  for (int i = 0; i < materialSelectorNames.length - 1; i++) { 
     materialSelectorPositions[i][0] = 20;
     materialSelectorPositions[i][1] = 20 + 65 * i;
     materialSelectorPositions[i][2] = 60;
@@ -145,44 +207,40 @@ void setup() {
   }
 
   // Set positions of edit selectors
-  for (int i = 0; i < parameterSelectorNames.length; i++) { 
+  for (int i = 0; i < parameterSelectorNames.length - 1; i++) { 
     sceneSwitcherPositions[i][0] = 100;
     sceneSwitcherPositions[i][1] = 20 + 65 * i;
     sceneSwitcherPositions[i][2] = 40;
     sceneSwitcherPositions[i][3] = 35;
   }
 
-  yellowSlider = new PhysicalSlider(this, numVerticalButtons);
-  yellowSlider.drawSlider(200, 25, 90, 700); 
-  redSlider = new PhysicalSlider(this, numVerticalButtons);
+  redSlider = new PhysicalSlider(this, numVerticalButtons, color(241, 89, 110, 50));
   redSlider.drawSlider(400, 25, 90, 700);
-  blueSlider = new PhysicalSlider(this, numVerticalButtons);
-  blueSlider.drawSlider(600, 25, 90, 700);
+
+  yellowSlider = new PhysicalSlider(this, numVerticalButtons, color(255, 209, 102, 50));
+  yellowSlider.drawSlider(600, 25, 90, 700); 
+
+  blueSlider = new PhysicalSlider(this, numVerticalButtons, color(15, 157, 174, 50));
+  blueSlider.drawSlider(200, 25, 90, 700);
 
   saveButton = new Button(this, "Save");
   loadButton = new Button(this, "Load");
-  clearButton = new Button(this, "Clear");
-  uploadButton = new Button(this, "Upload", 'G');
+  clearButton = new Button(this, "Clear all");
+  uploadButton = new Button(this, "Upload");
 
-  materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length, materialSelectorNames, materialColors);
-  materialSelector.defaultColor(bgColor); 
-  parameterSelector = new uniqueSelectButtons(this, parameterSelectorNames.length, parameterSelectorNames, materialColors);
-  parameterSelector.defaultColor(bgColor);
+  materialSelector = new uniqueSelectButtons(this, materialSelectorNames.length - 1, materialSelectorNames, materialColors);
+  materialSelector.defaultColor(mainColor); 
+  parameterSelector = new uniqueSelectButtons(this, parameterSelectorNames.length - 1, parameterSelectorNames, materialColors);
+  parameterSelector.defaultColor(mainColor);
 
-  yellowGrains = new GrainCalculator(this, "yellow", yellowSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
   redGrains = new GrainCalculator(this, "red", redSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
+  yellowGrains = new GrainCalculator(this, "yellow", yellowSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
   blueGrains = new GrainCalculator(this, "blue", blueSlider, materials, 1024); // slider to calculate, materialcollection to use, target range
 }
 
 void draw() {
 
-  background(18, 18, 18);
-
-  // Display buttons
-  saveButton.display(20, 770, 100, 35);  
-  loadButton.display(140, 770, 100, 35);
-  clearButton.display(260, 770, 100, 35);
-  uploadButton.display(380, 770, 100, 35);
+  background(mainColor);
 
   // Display material and parameter window selector
   materialSelector.display(materialSelectorPositions);
@@ -195,18 +253,22 @@ void draw() {
 
     yellowSlider.assignValue(toggleMaterial);
     yellowSlider.assignColor(materialColors[toggleMaterial]); //don't do this
+
     redSlider.assignValue(toggleMaterial);
     redSlider.assignColor(materialColors[toggleMaterial]); //don't do this
+
     blueSlider.assignValue(toggleMaterial);
     blueSlider.assignColor(materialColors[toggleMaterial]); //don't do this
   } else {
 
     yellowSlider.assignColor(yellowSlider.defaultColor);
     yellowSlider.assignValue(toggleMaterial); //no value assigned
-    redSlider.assignColor(yellowSlider.defaultColor);
+
+    redSlider.assignColor(redSlider.defaultColor);
     redSlider.assignValue(toggleMaterial); //no value assigned
-    redSlider.assignColor(yellowSlider.defaultColor);
-    redSlider.assignValue(toggleMaterial); //no value assigned
+
+    blueSlider.assignColor(blueSlider.defaultColor);
+    blueSlider.assignValue(toggleMaterial); //no value assigned
   }
 
   // Display second window
@@ -217,80 +279,462 @@ void draw() {
     }
   }
 
+  // Draw right and left texts
+  fill(100);
+  rect(800, 20, 120, 50);
+  fill(100);
+  rect(800, 680, 120, 50);
+  fill(whiteColor);
+  text("Max", 840, 50);
+  text("Min", 840, 710);
+
   // Display physical sliders
-  yellowSlider.drawSlider(200, 25, 90, 700);
   redSlider.drawSlider(400, 25, 90, 700);
-  blueSlider.drawSlider(600, 25, 90, 700);
-
-  // Clear button event
-  if (clearButton.isClicked()) {
-    yellowSlider.clearSlider();
-    redSlider.clearSlider();
-    blueSlider.clearSlider();
-  }
-
-  // Save button event
-  if (saveButton.isClicked()) {
-    saveJSONArray(materialJSON, "sequences/materials.json");
-  }
-
-  // Load button event
-  if (loadButton.isClicked()) {
-
-    String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-
-    printArray(materialPositions);
-    println(".........................");
-  }
-
-  // Upload button event
-  if (uploadButton.isClicked()) {
-    //  String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-    //  printArray(materialPositions);
-    //  for (int i=0; i < materialPositions.length; i++) {
-    //    // myPort.write(byte(int(materialPositions[i])));
-    //    myPort.write(materialPositions[i]);
-    //  }
-    //  println("SEND IT!");
-    
-    // Upload grain positions
-    myPort.write("POSITIONS");
-    myPort.write(";");
-    for(int i=0; i<yellowGrains.grainsPositions.size(); i++){
-      myPort.write(yellowGrains.grainsPositions.get(i).toString());
-      myPort.write("-");
-    }
-    myPort.write(";");
-  }
+  yellowSlider.drawSlider(600, 25, 90, 700);
+  blueSlider.drawSlider(200, 25, 90, 700);
 
   // Update grains
   yellowGrains.updateGrains();
   redGrains.updateGrains();
   blueGrains.updateGrains();
 
-  println(yellowGrains.grainsPositions);
-  println(yellowGrains.grainsMaterials);
-  // println(yellowGrains.grainsPositions.size());
+  // Display buttons
+  fill(whiteColor);
+  saveButton.display(20, 770, 100, 35);  
+  loadButton.display(140, 770, 100, 35);
+  clearButton.display(260, 770, 100, 35);
+  uploadButton.display(380, 770, 100, 35);
 }
 
 void frame2Start(int index, String name) {
-  sa = new SecondApplet(name, index);
+  sa = new SecondApplet(name, index, materialColors[index]);
   frame2Exit = false;
 }
 
 void mouseReleased()
 {
+  // Clear button event
+  if (clearButton.isClicked()) {
+    yellowSlider.clearSlider();
+    redSlider.clearSlider();
+    blueSlider.clearSlider();
+
+    sendStopAugmentation("0");
+    sequencesAdded = false;
+  }
+
+  // Save button event
+  if (saveButton.isClicked()) {
+
+    selectOutput("Type thename of the design : ", "fileSelectedJSON", dataFile(".json"));
+
+    while (fileTyped == false) {
+      // println("No filenamesaved yet.");
+      println("");
+    }
+
+    if (filenameJSON != "") {
+
+      // Get data from physical sliders
+      yellowJSON = new JSONArray();
+      for (int i = 0; i < yellowSlider.state.length; i++) {
+        JSONObject _slider = new JSONObject();
+        _slider.setString("material", str(yellowSlider.state[i]));
+        _slider.setString("color", str(yellowSlider.toggleColor[i]));
+        yellowJSON.setJSONObject(i, _slider);
+      }
+
+      redJSON = new JSONArray();
+      for (int i = 0; i < redSlider.state.length; i++) {
+        JSONObject _slider = new JSONObject();
+        _slider.setString("material", str(redSlider.state[i]));
+        _slider.setString("color", str(redSlider.toggleColor[i]));
+        redJSON.setJSONObject(i, _slider);
+      }
+
+      blueJSON = new JSONArray();
+      for (int i = 0; i < blueSlider.state.length; i++) {
+        JSONObject _slider = new JSONObject();
+        _slider.setString("material", str(blueSlider.state[i]));
+        _slider.setString("color", str(blueSlider.toggleColor[i]));
+        blueJSON.setJSONObject(i, _slider);
+      }
+
+      // Save data
+      data.setJSONArray("materials", materialJSON);
+      data.setJSONArray("yellow", yellowJSON);
+      data.setJSONArray("red", redJSON);
+      data.setJSONArray("blue", blueJSON);
+
+      filenameJSON = filenameJSON.replace("\\", "/");
+      println(filenameJSON);
+      saveJSONObject(data, filenameJSON);
+    }
+
+    fileTyped = false;
+  }
+
   // Upload button event
   if (uploadButton.isClicked()) {
-    String[] materialPositions = getMaterialSequence(yellowSlider.toggleColor, materialColors);
-    // printArray(materialPositions);
-    for (int i=0; i < materialPositions.length; i++) {
-      // myPort.write(byte(int(materialPositions[i])));
-      myPort.write(materialPositions[i]);
-      myPort.write(",");
-      println(materialPositions[i]);
+
+    sendAddMaterialList();
+
+    // decide add or update sequences
+    if (sequencesAdded == false) {
+      sendAddGrainSequence("3", "blue");
+      sendAddGrainSequence("4", "red");
+      sendAddGrainSequence("5", "yellow");
+
+      sendUpdateGrainSequence("3", "blue");
+      sendUpdateGrainSequence("4", "red");
+      sendUpdateGrainSequence("5", "yellow");
+
+      // start augmentation
+      sendStartAugmentation("0");
+
+      sequencesAdded = true;
+    } else {
+      sendUpdateGrainSequence("3", "blue");
+      sendUpdateGrainSequence("4", "red");
+      sendUpdateGrainSequence("5", "yellow");
     }
-    println("SEND IT!");
-    // myPort.clear();
   }
+
+  // Load button event
+  if (loadButton.isClicked()) {
+
+    // println("Load clicked");
+
+    selectInput("Select a file to process : ", "fileSelected", dataFile(" * .json"));
+
+    while (fileReaded == false) {
+      // println("No selectedloaded yet");
+      println(" ");
+    }
+
+    if (selectedDesign != "") {
+
+      yellowSlider.clearSlider();
+      redSlider.clearSlider();
+      blueSlider.clearSlider();
+
+      JSONObject dataLoad = loadJSONObject(selectedDesign);
+      JSONArray materialsLoad = dataLoad.getJSONArray("materials");
+      JSONArray yellowLoad = dataLoad.getJSONArray("yellow");
+      JSONArray redLoad = dataLoad.getJSONArray("red");
+      JSONArray blueLoad = dataLoad.getJSONArray("blue");
+
+      // Load materials
+      for (int i = 0; i < materialsLoad.size(); i++) {
+
+        JSONObject matLoad = materialsLoad.getJSONObject(i);
+        materials.materialFrecuencies[i] = int(matLoad.getString("frecuency"));
+        materials.materialAmplitudes[i] = float(matLoad.getString("amplitude"));
+        materials.materialPhases[i] = int(matLoad.getString("phase"));
+        materials.materialWaves[i] = int(matLoad.getString("waveform"));
+        materials.materialGranularity[i] = int(matLoad.getString("grains"));
+        materials.cvFlag[i] = int(matLoad.getString("cv"));
+      }
+
+      // Load yellow sequence
+      for (int i = 0; i < yellowLoad.size(); i++) {
+        JSONObject reLoad = yellowLoad.getJSONObject(i);
+        yellowSlider.state[i] = int(reLoad.getString("material"));
+        yellowSlider.toggleColor[i] = int(reLoad.getString("color"));
+      }
+
+      // Load red sequence
+      for (int i = 0; i < redLoad.size(); i++) {
+        JSONObject reLoad = redLoad.getJSONObject(i);
+        redSlider.state[i] = int(reLoad.getString("material"));
+        redSlider.toggleColor[i] = int(reLoad.getString("color"));
+      }
+
+      // Load red sequence
+      for (int i = 0; i < blueLoad.size(); i++) {
+        JSONObject reLoad = blueLoad.getJSONObject(i);
+        blueSlider.state[i] = int(reLoad.getString("material"));
+        blueSlider.toggleColor[i] = int(reLoad.getString("color"));
+      }
+    }
+  }
+
+  fileReaded = false;
+}
+
+void fileSelected(File selection) {
+  if (selection == null) {
+    selectedDesign = "";
+  } else {
+    selectedDesign = selection.getAbsolutePath();
+  }
+  fileReaded = true;
+}
+
+void fileSelectedJSON(File selection) {
+  if (selection == null) {
+    //println("Window was closed or the user hit cancel.");
+    filenameJSON = "";
+  } else {
+    filenameJSON = selection.getAbsolutePath();
+    //println("User selected " + filenameJSON);
+  }
+  fileTyped = true;
+}
+
+void sendStartAugmentation(String destination) {
+
+  String msg = "";
+
+  println("[INFO] START SENDING: START AUGMENTATION");
+
+  // send start String
+  msg += msgStart;
+  // send destination
+  msg += destination;
+  msg += ",";
+  // send msg type
+  msg += msgStartAugmentation;
+  msg += ",";
+  // send length
+  msg += "0";
+  // send dash
+  msg += ",";
+  msg += "-";
+  // send end string 
+  msg += msgEnd;
+
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
+  println(msg);
+
+  println("[INFO] END SENDING : START AUGMENTATION\n");
+}
+
+void sendStopAugmentation(String destination) {
+  String msg = "";
+
+  println("[INFO] START SENDING: STOP AUGMENTATION");
+
+  // send start String
+  msg += msgStart;
+  // send destination
+  msg += destination;
+  msg += ",";
+  // send msg type
+  msg += msgStopAugmentation;
+  msg += ",";
+  // send length
+  msg += "0";
+  // send dash
+  msg += ",";
+  msg += "-";
+  // send end string 
+  msg += msgEnd;
+
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
+  println(msg);
+
+  println("[INFO] END SENDING : STOP AUGMENTATION\n");
+}
+
+void sendAddMaterialList() {
+  println("[INFO] START SENDING LIST OF MATERIALS");
+  String msg = "";
+
+  // send start string
+  msg += msgStart;
+
+  // send destinarion : this function is for broadcasting
+  msg += msgDestBroadcast;
+  msg += ",";
+
+  // send msg type
+  msg += msgAddMaterialList;
+  msg += ",";
+
+  // send length
+  msg += str(materialSelectorNames.length);
+  msg += ",";
+
+  // send payload : material list
+  for (int i = 0; i < materialSelectorNames.length; i++) {
+    msg += str(i + 1);
+    msg += ",";
+    msg += str(materials.cvFlag[i]);
+    msg += ",";
+    // myPort.write(str(materials.materialGranularity[i]));
+    // myPort.write(",");
+    msg += str(materials.materialWaves[i]);
+    msg += ",";
+    msg += str(materials.materialFrecuencies[i]);
+    msg += ",";
+    msg += str(materials.materialAmplitudes[i]);
+    msg += ",";
+
+    if (materials.materialDurations[i] == ghostDuration) {
+      msg += str((int)materials.materialDurations[i]);
+    } else {
+      msg += str((int)materials.materialDurations[i]);
+    }
+
+    if (i != materialSelectorNames.length - 1) {
+      msg += ",";
+    }
+  }
+
+  msg += msgEnd;
+
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
+  println(msg);
+
+  println("[INFO] END SENDING LIST OF MATERIALS\n");
+}
+
+void sendUpdateGrainSequence(String destination, String slider) {
+  String msg = "";
+
+  String[] grainMaterials = {};
+  ArrayList<Integer> generalGrainsPositionsStart = new ArrayList<Integer>();
+  ArrayList<Integer> generalGrainsPositionsEnd = new ArrayList<Integer>();
+
+  println("[INFO] START UPDATING LIST OF SEQUENCE");
+
+  // send start string
+  msg += msgStart;
+
+  // send destinarion
+  msg += destination;
+  msg += ",";
+
+  // send msg type
+  msg += msgUpdateGrainSequence;
+  msg += ",";
+
+  switch(slider) {
+  case "yellow":
+    grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
+    generalGrainsPositionsStart = yellowGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = yellowGrains.grainsPositionsEnd;
+    break;
+  case "red":
+    grainMaterials = fromColorToMaterial(redGrains.grainsMaterials, materialColors);
+    generalGrainsPositionsStart = redGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = redGrains.grainsPositionsEnd;
+    break;
+  case "blue":
+    grainMaterials = fromColorToMaterial(blueGrains.grainsMaterials, materialColors);
+    generalGrainsPositionsStart = blueGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = blueGrains.grainsPositionsEnd;
+    break;
+  default:
+    break;
+  }
+
+  // send length
+  msg += str(generalGrainsPositionsStart.size());
+  msg += ",";
+
+  // send sequence ID
+  msg += "1";
+
+  if (generalGrainsPositionsStart.size() != 0) {
+    msg += ",";
+  }
+
+  // send data
+  for (int i = 0; i < generalGrainsPositionsStart.size(); i++) {
+
+    msg += str(int(grainMaterials[i]) + 1);
+    msg += ",";
+    msg += generalGrainsPositionsStart.get(i).toString();
+    msg += ",";
+    msg += generalGrainsPositionsEnd.get(i).toString();
+
+    if (i != generalGrainsPositionsStart.size() - 1) {
+      msg += ",";
+    }
+  }
+
+  // send end string
+  msg += msgEnd;
+
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
+  println(msg);
+
+  println("[INFO] END UPDATING LIST OF SEQUENCES\n");
+}
+
+void sendAddGrainSequence(String destination, String slider) {
+
+  String msg = "";
+
+  String[] grainMaterials = {};
+  ArrayList<Integer> generalGrainsPositionsStart = new ArrayList<Integer>();
+  ArrayList<Integer> generalGrainsPositionsEnd = new ArrayList<Integer>();
+
+  println("[INFO] START ADDING LIST OF SEQUENCE");
+
+  // send start string
+  msg += msgStart;
+
+  // send destinarion
+  msg += destination;
+  msg += ",";
+
+  // send msg type
+  msg += msgAddGrainSequence;
+  msg += ",";
+
+  switch(slider) {
+  case "yellow":
+    grainMaterials = fromColorToMaterial(yellowGrains.grainsMaterials, materialColors);
+    generalGrainsPositionsStart = yellowGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = yellowGrains.grainsPositionsEnd;
+    break;
+  case "red":
+    grainMaterials = fromColorToMaterial(redGrains.grainsMaterials, materialColors);
+    generalGrainsPositionsStart = redGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = redGrains.grainsPositionsEnd;
+    break;
+  case "blue":
+    grainMaterials = fromColorToMaterial(blueGrains.grainsMaterials, materialColors);
+    generalGrainsPositionsStart = blueGrains.grainsPositionsStart;
+    generalGrainsPositionsEnd = blueGrains.grainsPositionsEnd;
+    break;
+  default:
+    break;
+  }
+
+  // send length
+  msg += str(generalGrainsPositionsStart.size());
+  msg += ",";
+
+  // send sequence ID
+  msg += "1";
+
+  if (generalGrainsPositionsStart.size() != 0) {
+    msg += ",";
+  }
+
+  // send data
+  for (int i = 0; i < generalGrainsPositionsStart.size(); i++) {
+
+    msg += str(int(grainMaterials[i]) + 1); 
+    msg += ",";
+    msg += generalGrainsPositionsStart.get(i).toString();
+    msg += ",";
+    msg += generalGrainsPositionsEnd.get(i).toString();
+
+    if (i != generalGrainsPositionsStart.size() - 1) {
+      msg += ",";
+    }
+  }
+
+  // send end string
+  msg += msgEnd;
+
+  // myPort.write(msg); // Uncomment this line to use the GUI with a Teensy
+  println(msg);
+
+  println("[INFO] END ADDING LIST OF SEQUENCE\n");
 }
